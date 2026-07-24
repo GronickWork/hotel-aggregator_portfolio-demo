@@ -20,7 +20,7 @@ docker run -p 3001:3001 -it --rm gronik4/diploma-project_on_nodejs:v1.2.15
   
 ### Тестовые аккаунты (для демо)  
 Чтобы сразу проверить функционал (чат, бронирование, админку), используйте готовые аккаунты:  
-Администратор: admin@yandex.ru / 25xGnuO    
+Учетку админа не даю по понятным причинам.   
 Пользователь(User): helga@yandex.ru / J9QZTqk  
   
 Это демо-версия для рекрутеров. Основная дипломная версия (строго по ТЗ) находится [здесь](https://github.com/Gronik4/graduation-project_backend-development-with-node.js.git)
