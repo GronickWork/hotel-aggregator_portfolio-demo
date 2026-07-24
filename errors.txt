@@ -1,0 +1,61 @@
+Дурацкие ошибки:
+  1. MongoServerError: FieldPath cannot be constructed with empty string
+  Решение:
+    В выражении: .select('-__v') - между "-" и "__v" - не должно быть пробела!!! - потери времени - 3 часа!!!!!!!
+
+
+Просто ошибки:
+  1. Nest can't resolve dependencies of the AuthUserGuard (?, Model). Please make sure that the argument AuthService at index [0] is available in the UsersModule context.
+
+    Potential solutions:
+    - Is UsersModule a valid NestJS module?
+    - If AuthService is a provider, is it part of the current UsersModule?
+    - If AuthService is exported from a separate @Module, is that module imported within UsersModule?
+      @Module({
+        imports: [ /* the Module containing AuthService */ ]
+      })
+  Решение:
+    В UsersModule, в providers: [] добавил AuthService
+  
+  2. Nest can't resolve dependencies of the AuthUserGuard (?). Please make sure that the argument UsersService at index [0] is available in the HotelModule context. 
+
+    Potential solutions:
+    - Is HotelModule a valid NestJS module?
+    - If UsersService is a provider, is it part of the current HotelModule?
+    - If UsersService is exported from a separate @Module, is that module imported within HotelModule?
+      @Module({
+        imports: [ /* the Module containing UsersService */ ]
+      })
+  Решение: 
+    В HotelModule в imports: добавил UsersModule
+
+  3. Nest can't resolve dependencies of the SupportRequestService (SupportRequestModel, ?). Please make sure that the argument "MessageModel" at index [1] is available in the SupportRequestModule context.
+
+    Potential solutions:
+    - Is SupportRequestModule a valid NestJS module?
+    - If "MessageModel" is a provider, is it part of the current SupportRequestModule?
+    - If "MessageModel" is exported from a separate @Module, is that module imported within SupportRequestModule?
+      @Module({
+        imports: [ /* the Module containing "MessageModel" */ ]
+      })
+  Решение: В SupportRequestModule, в imports: добавил MessageModel и в providers: [] добавил MessageService
+
+  4. После добавления в SupportRequestController UseGuards(AuthUserGuard) в этом гварде в стоке 30:
+    const userForRole = await this.userSrv.findById(request.session.userId as typeId); в консоли, ошибка:
+    TypeError: Cannot read properties of undefined (reading 'findById')
+  Решение: В SupportRequestModule, в imports: добавил UsersModule
+****************************Ошибки Docker*********************************************
+  1.Docker не видит package.json.
+    Решение: в Dockterfile после: WORKDIR /usr/app, добавил строку: COPY --from=builder /usr/app/package*.json .
+  
+  2. Docker не видит @nestjs/core - Error: Cannot find module '@nestjs/core', хотя в package.json, в dependencies есть: "@nestjs/core": "^11.0.1",
+    Решение: в Dockterfile, после COPY --from=builder /usr/app/package*.json . добавил: COPY --from=builder /usr/app/node_modules ./node_modules
+    Все заработало!!
+******************************Тестирование**********************************************
+  1. SyntaxError: Cannot use import statement outside a module
+
+      14 | import path, { join } from 'path';
+      15 | import fs from 'fs';
+    > 16 | import { nanoid } from 'nanoid';
+         | ^
+    Решение:  в package.json в jest добавил строку: "extensionsToTreatAsEsm": [".ts"].

@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.dockerignore
+Dockerfile
+*.tgz
+start-data.txt
+Initial-data.txt
+errors.txt
+analiticsUrl.txt
+analiticsOutput.txt

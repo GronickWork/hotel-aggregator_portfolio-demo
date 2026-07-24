@@ -1,0 +1,30 @@
+services:
+  nest-app:
+    container_name: diploma-node.js
+    image: diploma-node.js:latest
+    build: 
+      context: .
+    ports:
+      - "${HTTP_PORTS:-3001}:${HTTP_PORTS:-3001}"
+
+    environment:
+      HTTP_PORT: ${HTTP_PORT:-3001}
+      MONGO_URL: ${MONGO_URL}
+      DB_USER_NAME: ${DB_USER_NAME}
+      DB_USER_PASSWORD: ${DB_USER_PASSWORD}
+    
+    depends_on:
+      - mongo
+    
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27217"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER_NAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_USER_PASSWORD}
+volumes:
+  mongodata:
