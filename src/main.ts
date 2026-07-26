@@ -4,9 +4,29 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { keys } from 'project-config/keys-config';
 import { links } from 'project-config/links-config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: false }),
+  );
+
+  const config = new DocumentBuilder()
+    .setTitle('API Агрегатора гостиниц')
+    .setDescription('Бэкенд агрегатора: бронирование, отели, поддержка, авторизация')
+    .setVersion('1.0.0')
+    .addTag('hotels', 'Управление отелями и номерами')
+    .addTag('reservations', 'Бронирование и заказы')
+    .addTag('auth', 'Авторизация и сессии')
+    .addTag('support', 'Заявки в поддержку')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('swagger', app, document);
+
   app.use(cookieParser());
   app.use(
     session({
