@@ -6,6 +6,7 @@ import { User, UserDocument } from '../Users/schemas/user.schema';
 import { RegistrAuthDto } from './dto/registr.auth.dto';
 import { AuthUserGuard } from '../guards/auth.guard';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginAuthDto } from './dto/login.auth.dto';
 
 @Controller('/api')
 @ApiTags('auth')
@@ -29,6 +30,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Авторизация пользователя (логин)' })
   @ApiResponse({ status: 200, description: 'Успешная авторизация' })
   @ApiResponse({ status: 401, description: 'Неверный email или пароль' })
+  @ApiBody({ type: LoginAuthDto })
   loginUser(@Body() data: User): object | null {
     return this.authSrv.login(data);
   }

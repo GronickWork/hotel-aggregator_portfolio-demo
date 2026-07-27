@@ -10,6 +10,7 @@ import { User, UserDocument } from '../Users/schemas/user.schema';
 import { UsersService } from '../Users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegistrAuthDto } from './dto/registr.auth.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
     @InjectConnection() private connection: Connection,
     private readonly UserSRV: UsersService,
+    private readonly jwtSrv: JwtService,
   ) {
     this.newUser = null;
   }

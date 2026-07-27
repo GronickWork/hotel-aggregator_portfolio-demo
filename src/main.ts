@@ -9,7 +9,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  /**Строки с useGlobalPipes по  SwaggerModule.setup нужны толко для Swagger*/
   app.useGlobalPipes(
     new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: false }),
   );
@@ -22,10 +22,11 @@ async function bootstrap() {
     .addTag('reservations', 'Бронирование и заказы')
     .addTag('auth', 'Авторизация и сессии')
     .addTag('support', 'Заявки в поддержку')
+    .addBearerAuth(undefined, 'bearer')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   app.use(cookieParser());
   app.use(

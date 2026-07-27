@@ -12,6 +12,7 @@ import { links } from 'project-config/links-config';
 import { AuthModule } from './auth/auth.module';
 import { SessionModule } from './session/session.module';
 import { SupportRequestClientModule } from './SupportRequest/support-request-client/support-request-client.module';
+import { JwtAuthModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SupportRequestClientModule } from './SupportRequest/support-request-cli
     AuthModule,
     SessionModule,
     SupportRequestClientModule,
+    JwtAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
