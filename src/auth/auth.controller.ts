@@ -35,6 +35,15 @@ export class AuthController {
     return this.authSrv.login(data);
   }
 
+  @Post('/auth/login-jwt')
+  @ApiOperation({ summary: 'Авторизация пользователя (получение токена)' })
+  @ApiResponse({ status: 200, description: 'Успешная авторизация' })
+  @ApiResponse({ status: 401, description: 'Неверный email или пароль' })
+  @ApiBody({ type: LoginAuthDto })
+  loginForPortfolio(@Body() data: LoginAuthDto) {
+    return this.authSrv.loginJwt(data);
+  }
+
   @Post('/auth/logout')
   @ApiOperation({ summary: 'Выход пользователя (разлогин)' })
   @ApiResponse({ status: 204, description: 'Сессия успешно уничтожена' })

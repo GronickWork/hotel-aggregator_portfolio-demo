@@ -11,6 +11,7 @@ import { UsersService } from '../Users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegistrAuthDto } from './dto/registr.auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LoginAuthDto } from './dto/login.auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,12 +44,22 @@ export class AuthService {
     }
   }
 
-  async login(data: User): Promise<object | null> {
+  async login(data: User): Promise<object | { access_token: string } | null> {
     if (data) {
       const user = await this.UserSRV.findByEmail(data.email);
       return { email: user?.email, name: user?.name, contactPhone: user?.contactPhone };
     }
     return null;
+  }
+
+  async loginJwt(data: LoginAuthDto): Promise<{ access_token: string } | null> {
+    if (!data || !data.email || !data.password) {
+      throw new HttpException('Email и пароль обязательны', 400);
+    }
+    const user = await this.validateUser(data.email, data.password);
+    const payload = { sub: user.id.toString() };
+    const access_token = this.jwtSrv.sign(payload);
+    return { access_token };
   }
 
   async validateUser(email: string, password: string): Promise<User> {

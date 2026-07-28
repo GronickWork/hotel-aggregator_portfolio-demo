@@ -5,14 +5,29 @@ import cookieParser from 'cookie-parser';
 import { keys } from 'project-config/keys-config';
 import { links } from 'project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+//import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   /**Строки с useGlobalPipes по  SwaggerModule.setup нужны толко для Swagger*/
-  app.useGlobalPipes(
-    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: false }),
-  );
+  /*app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      exceptionFactory: (errors) => {
+        const messages = errors.map((err) => {
+          return {
+            property: err.property,
+            constraints: err.constraints,
+          };
+        });
+        return new BadRequestException({
+          message: 'Ошибка валидации',
+          details: messages,
+        });
+      },
+    }),
+  );*/
 
   const config = new DocumentBuilder()
     .setTitle('API Агрегатора гостиниц')
