@@ -5,25 +5,25 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  id: Types.ObjectId;
+  id!: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
-  email: string;
+  email!: string;
 
   @Prop({ required: true })
-  passwordHash: string;
+  passwordHash!: string;
 
   @Prop({ required: true })
-  name: string;
+  name!: string;
 
   @Prop()
-  contactPhone: string;
+  contactPhone!: string;
 
   @Prop({ required: true, default: 'client' })
-  role: 'client' | 'admin' | 'manager';
+  role!: 'client' | 'admin' | 'manager';
 
   @Prop({ required: true, default: 'self' })
-  whoCreate: 'self' | 'admin';
+  whoCreate!: 'self' | 'admin';
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

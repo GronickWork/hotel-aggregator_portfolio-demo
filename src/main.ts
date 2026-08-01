@@ -5,12 +5,12 @@ import cookieParser from 'cookie-parser';
 import { keys } from 'project-config/keys-config';
 import { links } from 'project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-//import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   /**Строки с useGlobalPipes по  SwaggerModule.setup нужны толко для Swagger*/
-  /*app.useGlobalPipes(
+  app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
       whitelist: true,
@@ -27,7 +27,7 @@ async function bootstrap() {
         });
       },
     }),
-  );*/
+  );
 
   const config = new DocumentBuilder()
     .setTitle('API Агрегатора гостиниц')
