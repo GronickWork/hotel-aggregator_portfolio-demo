@@ -16,7 +16,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import type { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
 import type { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
 import { Types } from 'mongoose';
-import { AuthUserGuard } from 'src/guards/auth.guard';
+import { AuthUserGuard } from '../../guards/auth.guard';
 
 @Controller('/api')
 export class HotelRoomController {

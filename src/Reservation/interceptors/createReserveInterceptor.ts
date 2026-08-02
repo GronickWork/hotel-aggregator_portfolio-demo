@@ -10,7 +10,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
-import { HotelRoomService } from 'src/Hotels/hotelRoom/hotel-room.service';
+import { HotelRoomService } from '../../Hotels/hotelRoom/hotel-room.service';
 import { ReservationDto } from '../Interfaces/dto/ReservationDto';
 
 @Injectable()

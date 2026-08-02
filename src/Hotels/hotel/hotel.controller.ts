@@ -12,7 +12,7 @@ import { HotelService } from './hotel.service';
 import type { createHotelDto } from '../Interfaces/dto/createHotelDto';
 import { Hotel, HotelDocument } from '../Schemas/hotel.schema';
 import type { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
-import type { typeId } from 'src/Users/Interfaces/param-id';
+import type { typeId } from '../../Users/Interfaces/param-id';
 import type { SearchHotelParams } from '../Interfaces/SearchHotelParams';
 import { AuthUserGuard } from '../../guards/auth.guard';
 

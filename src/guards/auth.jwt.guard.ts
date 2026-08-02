@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
@@ -26,15 +25,5 @@ export class AuthJwtGuard extends AuthGuard('jwt') {
     }
     // 2. Если не публичный — делегируем основную проверку родителю (Passport)
     return super.canActivate(context);
-  }
-
-  handleRequest(err: any, user: any) {
-    if (err || !user) {
-      throw new HttpException(
-        'JWT токен не валиден либо пользователь не авторизован',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    return user;
   }
 }

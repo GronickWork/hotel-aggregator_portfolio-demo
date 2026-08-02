@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MemoryStore } from 'express-session';
-import { keys } from 'project-config/keys-config';
+import { keys } from '../../project-config/keys-config';
 
 @Module({
   imports: [],

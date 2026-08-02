@@ -8,7 +8,7 @@ import { ReservationModule } from './Reservation/reservation.module';
 import { SupportRequestModule } from './SupportRequest/support-request/support-request.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { links } from 'project-config/links-config';
+import { links } from '../project-config/links-config';
 import { AuthModule } from './auth/auth.module';
 import { SessionModule } from './session/session.module';
 import { SupportRequestClientModule } from './SupportRequest/support-request-client/support-request-client.module';

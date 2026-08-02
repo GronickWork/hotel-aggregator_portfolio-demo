@@ -4,7 +4,7 @@
 import { ExecutionContext, HttpException, Injectable } from '@nestjs/common';
 import { UsersService } from '../Users/users.service';
 import { AuthGuard } from '@nestjs/passport';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '..//Users/Interfaces/param-id';
 import { TestUrl } from './testUrl';
 
 @Injectable()

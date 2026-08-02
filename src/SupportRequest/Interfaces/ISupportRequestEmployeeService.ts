@@ -1,4 +1,4 @@
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../../Users/Interfaces/param-id';
 import { MarkMessagesAsReadDto } from './dto/MarkMessagesAsReadDto';
 import { GetUnreadDto } from './dto/GetUnreadDto';
 

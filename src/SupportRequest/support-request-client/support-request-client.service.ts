@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 import { HttpException, Injectable } from '@nestjs/common';
 import { ISupportRequestClientService } from '../Interfaces/ISupportRequestClientService';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../../Users/Interfaces/param-id';
 import { CreateSupportRequestDto } from '../Interfaces/dto/CreateSupportRequestDto';
 import { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 import { Model } from 'mongoose';

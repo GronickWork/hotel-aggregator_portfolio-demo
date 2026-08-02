@@ -4,7 +4,7 @@ import { CanActivate, ExecutionContext, HttpException, Injectable } from '@nestj
 import { typeId } from '../Users/Interfaces/param-id';
 import { UsersService } from '../Users/users.service';
 import { TestUrl } from './testUrl';
-import { SupportRequestService } from 'src/SupportRequest/support-request/support-request.service';
+import { SupportRequestService } from '../SupportRequest/support-request/support-request.service';
 
 @Injectable()
 export class SupportRequestGuard implements CanActivate {

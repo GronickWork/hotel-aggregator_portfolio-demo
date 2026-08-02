@@ -1,9 +1,10 @@
+import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import { keys } from 'project-config/keys-config';
-import { links } from 'project-config/links-config';
+import { keys } from '../project-config/keys-config';
+import { links } from '../project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 

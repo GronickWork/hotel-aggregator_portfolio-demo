@@ -14,12 +14,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-import type { typeId } from 'src/Users/Interfaces/param-id';
+import type { typeId } from '../Users/Interfaces/param-id';
 import type { ReservationDto } from './Interfaces/dto/ReservationDto';
 import { CreateReserveInterceptor } from './interceptors/createReserveInterceptor';
 import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
-import { AuthUserGuard } from 'src/guards/auth.guard';
-import { IdReservationGuard } from 'src/guards/id-reservation.guard';
+import { AuthUserGuard } from '../guards/auth.guard';
+import { IdReservationGuard } from '../guards/id-reservation.guard';
 import moment from 'moment';
 
 @Controller('/api')

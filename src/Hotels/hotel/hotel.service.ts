@@ -5,7 +5,7 @@ import { Hotel, HotelDocument } from '../Schemas/hotel.schema';
 import { Connection, Model, Types } from 'mongoose';
 import { createHotelDto } from '../Interfaces/dto/createHotelDto';
 import { IHotelService } from '../Interfaces/IHotelService';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../../Users/Interfaces/param-id';
 import { SearchHotelParams } from '../Interfaces/SearchHotelParams';
 import { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
 

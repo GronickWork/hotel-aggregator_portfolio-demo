@@ -9,7 +9,7 @@ import { ShowRoomData } from '../Interfaces/ShowRoomData';
 import { HotelService } from '../hotel/hotel.service';
 import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
 import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../../Users/Interfaces/param-id';
 
 @Injectable()
 export class HotelRoomService implements HotelRoomService {

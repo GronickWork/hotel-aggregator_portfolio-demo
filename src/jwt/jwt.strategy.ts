@@ -1,18 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { UsersService } from 'src/Users/users.service';
+import { UsersService } from '../Users/users.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../Users/Interfaces/param-id';
+import { keyj } from '../../project-config/keys-config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private ursS: UsersService) {
+  constructor(private userService: UsersService) {
+    const secret = keyj.JwtSecret;
+    if (!secret) {
+      throw new Error('JWT_SECRET is required. Set it in your config.');
+    }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET || 'fallback-secret-change-in-prod',
+      secretOrKey: secret,
     });
   }
 
@@ -20,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: { sub: string }) {
     // Приводим к typeId прямо здесь, чтобы угодить UsersService
     const id: typeId = { id: payload.sub };
-    const user = await this.ursS.findById(id);
+    const user = await this.userService.findByIdSilent(id);
 
     if (!user) {
       throw new HttpException(

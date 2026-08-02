@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { SupportRequestClientService } from './support-request-client.service';
-import { AuthUserGuard } from 'src/guards/auth.guard';
+import { AuthUserGuard } from '../../guards/auth.guard';
 import type { CreateSupportRequestDto } from '../Interfaces/dto/CreateSupportRequestDto';
 import { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 

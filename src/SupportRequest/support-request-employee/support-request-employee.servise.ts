@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { Message } from '../schemas/message.schema';
 import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
 import { GetUnreadDto } from '../Interfaces/dto/GetUnreadDto';
-import { typeId } from 'src/Users/Interfaces/param-id';
+import { typeId } from '../../Users/Interfaces/param-id';
 import { ISupportRequestEmployeeService } from '../Interfaces/ISupportRequestEmployeeService';
 
 @Injectable()

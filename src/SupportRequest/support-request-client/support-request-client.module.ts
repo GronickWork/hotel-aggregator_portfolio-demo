@@ -3,8 +3,8 @@ import { SupportRequestClientController } from './support-request-client.control
 import { SupportRequestClientService } from './support-request-client.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SupportRequest, SupportRequestSchema } from '../schemas/supportRequest.schema';
-import { UsersModule } from 'src/Users/users.module';
-import { AuthUserGuard } from 'src/guards/auth.guard';
+import { UsersModule } from '../../Users/users.module';
+import { AuthUserGuard } from '../../guards/auth.guard';
 import { Message } from '../schemas/message.schema';
 
 @Module({
