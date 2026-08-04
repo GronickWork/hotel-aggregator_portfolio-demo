@@ -18,23 +18,21 @@ import type { typeId } from '../Users/Interfaces/param-id';
 import type { ReservationDto } from './Interfaces/dto/ReservationDto';
 import { CreateReserveInterceptor } from './interceptors/createReserveInterceptor';
 import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
-import { AuthUserGuard } from '../guards/auth.guard';
 import { IdReservationGuard } from '../guards/id-reservation.guard';
 import moment from 'moment';
 
 @Controller('/api')
+@UseGuards()
 export class ReservationController {
   constructor(private readonly RrnService: ReservationService) {}
 
   @Post('/client/reservations') //Метод проверен
-  @UseGuards(AuthUserGuard)
   @UseInterceptors(CreateReserveInterceptor)
   reserve(@Body() data: ReservationDto) {
     return this.RrnService.addReservation(data);
   }
 
   @Get('/client/reservations')
-  @UseGuards(AuthUserGuard)
   getReservationsByClient(@Req() req) {
     const sesionId = req.session?.userId;
     const filters: ReservationSearchOptions = { userId: sesionId as typeId };
@@ -42,7 +40,6 @@ export class ReservationController {
   }
 
   @Get('/manager/reservations/:id') //Метод проверен
-  @UseGuards(AuthUserGuard)
   getReservations(
     @Param('id') id: string,
     @Query('dateStart') dateStart?: string,
@@ -60,13 +57,12 @@ export class ReservationController {
   }
 
   @Delete('/client/reservations/:id') // Метод проверен
-  @UseGuards(AuthUserGuard, IdReservationGuard)
+  @UseGuards(IdReservationGuard)
   async removeByClient(@Param('id') id: typeId): Promise<void> {
     await this.RrnService.removeReservation(id);
   }
 
   @Delete('/manager/reservations/:id')
-  @UseGuards(AuthUserGuard)
   async removeByManager(@Param('id') id: typeId): Promise<void> {
     await this.RrnService.removeReservation(id);
   }

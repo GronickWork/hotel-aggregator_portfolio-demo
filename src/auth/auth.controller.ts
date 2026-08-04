@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegistrAuthDto } from './dto/registr.auth.dto';
-import { AuthUserGuard } from '../guards/auth.guard';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginAuthDto } from './dto/login.auth.dto';
 import { ResponceRegistrAuthDto } from './dto/responce.registr.auth.dto';
+import { AnonymousGuard } from '@app/guards/anonymous.guard';
+import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
 
 @Controller('/api')
 @ApiTags('auth')
@@ -14,6 +13,7 @@ export class AuthController {
   constructor(private readonly authSrv: AuthService) {}
 
   @Post('/client/register')
+  @UseGuards(AnonymousGuard)
   @ApiOperation({ summary: 'Регистрация нового пользователя (клиент)' })
   @ApiResponse({ status: 201, description: 'Пользователь успешно создан' })
   @ApiResponse({ status: 400, description: 'Ошибка валидации или дубликат email' })
@@ -26,7 +26,7 @@ export class AuthController {
   }
 
   @Post('/auth/login')
-  @UseGuards(AuthUserGuard)
+  @UseGuards(AnonymousGuard)
   @ApiOperation({ summary: 'Авторизация пользователя (логин и получение токена)' })
   @ApiResponse({ status: 200, description: 'Успешная авторизация' })
   @ApiResponse({ status: 401, description: 'Неверный email или пароль' })
@@ -36,6 +36,7 @@ export class AuthController {
   }
 
   @Post('/auth/logout')
+  @UseGuards(AuthJwtGuard)
   @ApiOperation({ summary: 'Выход пользователя (разлогин)' })
   @ApiResponse({
     status: 204,

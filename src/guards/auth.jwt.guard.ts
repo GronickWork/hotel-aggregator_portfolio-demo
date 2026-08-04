@@ -20,6 +20,7 @@ export class AuthJwtGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
+    console.log('from AuthJwtGuard isPublic: ', isPublic);
     if (isPublic) {
       return true; // Пропускаем без проверки токена (логин, регистрация и т.п.)
     }

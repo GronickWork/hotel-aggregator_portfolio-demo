@@ -4,7 +4,7 @@ import { SupportRequestClientService } from './support-request-client.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SupportRequest, SupportRequestSchema } from '../schemas/supportRequest.schema';
 import { UsersModule } from '../../Users/users.module';
-import { AuthUserGuard } from '../../guards/auth.guard';
+import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import { Message } from '../schemas/message.schema';
 
 @Module({
@@ -17,6 +17,6 @@ import { Message } from '../schemas/message.schema';
     UsersModule,
   ],
   controllers: [SupportRequestClientController],
-  providers: [SupportRequestClientService, AuthUserGuard],
+  providers: [SupportRequestClientService, AuthJwtGuard],
 })
 export class SupportRequestClientModule {}

@@ -31,7 +31,6 @@ export class AuthService {
     const hashPassword = await bcrypt.hash(data.password, 10);
     const newData = { ...data, passwordHash: hashPassword };
     const newUser = await this.UserModel.create(newData);
-    console.log('from srv reg newUser', newUser);
     const token = this.generateAccessToken(newUser.id.toString());
     return {
       id: newUser.id.toString(),
@@ -69,6 +68,8 @@ export class AuthService {
 
   private generateAccessToken(userId: string): string {
     const payload = { sub: userId }; // sub — стандартный claim в JWT
-    return this.jwtSrv.sign(payload);
+    const token = this.jwtSrv.sign(payload);
+    console.log('Generated token: ', token);
+    return token;
   }
 }

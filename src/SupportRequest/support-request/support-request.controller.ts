@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import type { SendMessageDto } from '../Interfaces/dto/SendMessageDto';
 import { SupportRequestService } from './support-request.service';
-import { AuthUserGuard } from '../../guards/auth.guard';
+import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import type { GetChatListParams } from '../Interfaces/GetChatListParams';
 import type { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 import { ReplyMessageManager } from '../Interfaces/ReplyMessageManager';
@@ -21,12 +21,13 @@ import { ReplySendMessages } from '../Interfaces/ReplySendMessages';
 import { MarkMessagesAsReadDto } from '../Interfaces/dto/MarkMessagesAsReadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { GetUnreadDto } from '../Interfaces/dto/GetUnreadDto';
+
 @Controller('/api')
+@UseGuards(AuthJwtGuard)
 export class SupportRequestController {
   constructor(private readonly supReqSrv: SupportRequestService) {}
 
   @Get('/client/support-requests/') //Метод проверен
-  @UseGuards(AuthUserGuard)
   async getListClient(
     @Req() req,
     @Query() body: GetChatListParams,
@@ -36,19 +37,17 @@ export class SupportRequestController {
   }
 
   @Get('/manager/support-requests/') //Метод проверен
-  @UseGuards(AuthUserGuard)
   async getListManager(@Query() params: GetChatListParams) {
     return await this.supReqSrv.findSupportRequests(params, '');
   }
 
   @Get('/common/support-requests/:id/messages') //Метод проверен
-  @UseGuards(AuthUserGuard, SupportRequestGuard)
   async getHistoryMessage(@Param('id') id: string): Promise<ReplySendMessages[]> {
     return await this.supReqSrv.getMessages(id);
   }
 
   @Post('/common/support-requests/:id/messages') //Метод проверен
-  @UseGuards(AuthUserGuard, SupportRequestGuard)
+  @UseGuards(SupportRequestGuard)
   async postMessageRequest(
     @Param('id') paramId: string,
     @Body() data: SendMessageDto,
@@ -65,7 +64,7 @@ export class SupportRequestController {
   }
 
   @Post('/common/support-requests/:id/messages/read')
-  @UseGuards(AuthUserGuard, SupportRequestGuard)
+  @UseGuards(SupportRequestGuard)
   async markDateAsRead(@Param('id') supRId: string, @Req() req) {
     const sessId = req.session.userId;
     const readData: MarkMessagesAsReadDto = {
@@ -77,7 +76,7 @@ export class SupportRequestController {
   }
 
   @Get('/common/support-requests/:id/messages/read')
-  @UseGuards(AuthUserGuard, SupportRequestGuard)
+  @UseGuards(SupportRequestGuard)
   async getUnreadCount(@Param('id') supRId: string, @Req() req) {
     const sessId = req.session.userId;
     const data: GetUnreadDto = {

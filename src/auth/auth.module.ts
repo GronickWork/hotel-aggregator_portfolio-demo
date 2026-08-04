@@ -8,15 +8,18 @@ import { User, UserSchema } from '../Users/schemas/user.schema';
 import { UsersService } from '../Users/users.service';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from '../jwt/jwt.strategy';
+import { AnonymousGuard } from '@app/guards/anonymous.guard';
+import { JwtAuthModule } from '@app/jwt/jwt.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule.register({ defaultStrategy: 'local' }),
     UsersModule,
+    JwtAuthModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy, AnonymousGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

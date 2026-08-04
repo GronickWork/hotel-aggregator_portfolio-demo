@@ -8,7 +8,7 @@ import { HotelRoomModule } from '../Hotels/hotelRoom/hotel-room.module';
 import { HotelRoomService } from '../Hotels/hotelRoom/hotel-room.service';
 import { HotelService } from '../Hotels/hotel/hotel.service';
 import { UsersModule } from '../Users/users.module';
-import { AuthUserGuard } from '../guards/auth.guard';
+import { AuthJwtGuard } from '../guards/auth.jwt.guard';
 
 @Module({
   imports: [
@@ -23,6 +23,6 @@ import { AuthUserGuard } from '../guards/auth.guard';
     UsersModule,
   ],
   controllers: [ReservationController],
-  providers: [ReservationService, HotelRoomService, HotelService, AuthUserGuard],
+  providers: [ReservationService, HotelRoomService, HotelService, AuthJwtGuard],
 })
 export class ReservationModule {}

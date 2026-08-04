@@ -2,16 +2,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { SupportRequestClientService } from './support-request-client.service';
-import { AuthUserGuard } from '../../guards/auth.guard';
+import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import type { CreateSupportRequestDto } from '../Interfaces/dto/CreateSupportRequestDto';
 import { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 
 @Controller('api')
+@UseGuards(AuthJwtGuard)
 export class SupportRequestClientController {
   constructor(private readonly SRCService: SupportRequestClientService) {}
 
   @Post('/client/support-requests/')
-  @UseGuards(AuthUserGuard)
   async createSupportRequest(
     @Req() req,
     @Body() body: CreateSupportRequestDto,
