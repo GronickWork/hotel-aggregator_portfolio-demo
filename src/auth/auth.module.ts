@@ -8,8 +8,8 @@ import { User, UserSchema } from '../Users/schemas/user.schema';
 import { UsersService } from '../Users/users.service';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from '../jwt/jwt.strategy';
-import { AnonymousGuard } from '@app/guards/anonymous.guard';
 import { JwtAuthModule } from '@app/jwt/jwt.module';
+import { QuestOnlyGuard } from '@app/guards/guest.only.guard';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { JwtAuthModule } from '@app/jwt/jwt.module';
     JwtAuthModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy, AnonymousGuard],
+  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy, QuestOnlyGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

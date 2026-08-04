@@ -40,7 +40,18 @@ async function bootstrap() {
     .addTag('reservations', 'Бронирование и заказы')
     .addTag('auth', 'Авторизация и сессии')
     .addTag('support', 'Заявки в поддержку')
-    .addBearerAuth(undefined, 'bearer')
+    //.addBearerAuth(undefined, 'bearer') так swagger не видит токенов, по этому см след строка
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Введите JWT-токен (без префикса Bearer)',
+        in: 'header',
+      },
+      'bearer', // это имя-ключ, которое потом используется в @ApiBearerAuth('bearer')
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
