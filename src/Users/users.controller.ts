@@ -20,7 +20,7 @@ import { Roles } from '../guards/decorators/role.decorator';
 export class UsersController {
   constructor(private readonly userSRV: UsersService) {}
 
-  @Post('/admin/users/') //Метод проверен
+  @Post('admin/users/') //Метод проверен
   @Roles('admin')
   @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Регистрация нового пользователя (только для админа)' })
@@ -32,7 +32,7 @@ export class UsersController {
     return this.userSRV.create(body);
   }
 
-  @Get('/admin/users/') //Метод проверен
+  @Get('admin/users/') //Метод проверен
   @Roles('admin')
   @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для админа)' })
@@ -43,7 +43,7 @@ export class UsersController {
     return this.userSRV.findAll(params);
   }
 
-  @Get('/manager/users/') //Метод проверен
+  @Get('manager/users/') //Метод проверен
   @Roles('manager')
   @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для Менеджера)' })

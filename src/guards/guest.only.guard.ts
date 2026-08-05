@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class QuestOnlyGuard implements CanActivate {
+export class GuestOnlyGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>();
     const headers = req.headers as unknown as Record<string, string | string[]>;

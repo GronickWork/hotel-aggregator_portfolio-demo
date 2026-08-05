@@ -11,16 +11,16 @@ import {
 import { LoginAuthDto } from './dto/login.auth.dto';
 import { ResponceRegistrAuthDto } from './dto/responce.registr.auth.dto';
 import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
-import { QuestOnlyGuard } from '@app/guards/guest.only.guard';
+import { GuestOnlyGuard } from '@app/guards/guest.only.guard';
 
-@ApiBearerAuth() // говорит Swagger: «тут нужен Bearer-токен»
-@Controller('/api')
+@Controller('api')
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authSrv: AuthService) {}
 
-  @Post('/client/register')
-  @UseGuards(QuestOnlyGuard)
+  @Post('client/register')
+  @UseGuards(GuestOnlyGuard)
+  @ApiBearerAuth('bearer') // говорит Swagger: «тут нужен Bearer-токен»
   @ApiOperation({ summary: 'Регистрация нового пользователя (клиент)' })
   @ApiResponse({ status: 201, description: 'Пользователь успешно создан' })
   @ApiResponse({ status: 400, description: 'Ошибка валидации или дубликат email' })
@@ -32,8 +32,8 @@ export class AuthController {
     return this.authSrv.register(req, data);
   }
 
-  @Post('/auth/login')
-  @UseGuards(QuestOnlyGuard)
+  @Post('auth/login')
+  @UseGuards(GuestOnlyGuard)
   @ApiOperation({ summary: 'Авторизация пользователя (логин и получение токена.)' })
   @ApiResponse({ status: 200, description: 'Успешная авторизация' })
   @ApiResponse({ status: 401, description: 'Неверный email или пароль' })

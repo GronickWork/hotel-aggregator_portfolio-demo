@@ -9,7 +9,7 @@ import { UsersService } from '../Users/users.service';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from '../jwt/jwt.strategy';
 import { JwtAuthModule } from '@app/jwt/jwt.module';
-import { QuestOnlyGuard } from '@app/guards/guest.only.guard';
+import { GuestOnlyGuard } from '@app/guards/guest.only.guard';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { QuestOnlyGuard } from '@app/guards/guest.only.guard';
     JwtAuthModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy, QuestOnlyGuard],
+  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy, GuestOnlyGuard],
   exports: [AuthService],
 })
 export class AuthModule {}
