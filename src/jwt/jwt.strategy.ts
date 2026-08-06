@@ -23,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Приводим к typeId прямо здесь, чтобы угодить UsersService
     const id: typeId = { id: payload.sub };
     const user = await this.userService.findByIdSilent(id);
+    console.log('DEBUG JwtStrategy: user found?', !!user, 'sub:', payload.sub);
 
     if (!user) {
       throw new HttpException(
@@ -30,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         HttpStatus.UNAUTHORIZED,
       );
     }
-
+    console.log('DEBUG JwtStrategy payload role:', user.role);
     return {
       userId: user.id,
       email: user.email,

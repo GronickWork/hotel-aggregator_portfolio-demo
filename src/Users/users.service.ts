@@ -62,7 +62,7 @@ export class UsersService implements IUserService {
 
   /*Для стратегии: просто поиск, без исключений. Возвращает null, если нет. Чтобы не подменять ошибку 401 на 404 */
   async findByIdSilent(id: typeId): Promise<UserDocument | null> {
-    return await this.UserModel.findOne({ id: id.id });
+    return await this.UserModel.findOne({ _id: id.id });
   }
 
   /*Метод проверен */

@@ -4,6 +4,7 @@ import { UserDocument } from './schemas/user.schema';
 import { createUserDto } from './Interfaces/dto/createUserDto';
 import { SearchUserParams } from './Interfaces/SearchUserParams';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiResponse,
@@ -17,6 +18,7 @@ import { Roles } from '../guards/decorators/role.decorator';
 @Controller('api')
 @ApiTags('user')
 @UseGuards(AuthJwtGuard, RolesGuard)
+@ApiBearerAuth('bearer')
 export class UsersController {
   constructor(private readonly userSRV: UsersService) {}
 
@@ -38,7 +40,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Получение списка пользователей (только для админа)' })
   @ApiResponse({ status: 201, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  @ApiBody({ type: SearchUserParams })
+  //@ApiBody({ type: SearchUserParams })
   findAllForAdmin(@Query() params: SearchUserParams) {
     return this.userSRV.findAll(params);
   }
@@ -49,7 +51,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Получение списка пользователей (только для Менеджера)' })
   @ApiResponse({ status: 201, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  @ApiBody({ type: SearchUserParams })
+  //@ApiBody({ type: SearchUserParams })
   findAllforManager(@Query() params: SearchUserParams) {
     return this.userSRV.findAll(params);
   }
