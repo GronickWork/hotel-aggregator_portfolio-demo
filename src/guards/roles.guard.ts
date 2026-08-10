@@ -16,7 +16,6 @@ export class RolesGuard {
       [context.getHandler(), context.getClass()],
     );
     // Если ролей не задано — разрешаем (любой авторизованный ок)
-    console.log('from RolesGuard requiredRoles: , requiredRoles');
     if (!requiredRoles) {
       return true;
     }

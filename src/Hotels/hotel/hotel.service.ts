@@ -46,13 +46,15 @@ export class HotelService implements IHotelService {
   }
   /**Метод проверен */
   async search(params: SearchHotelParams): Promise<Hotel[] | string> {
+    const limit = params.limit ?? 10; // если нет — будет 10
+    const offset = params.offset ?? 0; // если нет — будет 0
     let findHotels: Hotel[];
     if (params.title) {
       findHotels = await this.HotelModel.find({
         title: { $regex: params.title, $options: 'i' },
       }).select('-__v');
       return findHotels.length > 0
-        ? findHotels.slice(params.offset, params.offset + params.limit)
+        ? findHotels.slice(offset, offset + limit)
         : 'Гостиницы с такими параметрами не найдены.';
     } else {
       return 'Поля поиска не заполнены.';
@@ -60,8 +62,9 @@ export class HotelService implements IHotelService {
   }
   /**Метод проверен */
   async update(id: typeId, data: UpdateHotelParams): Promise<Hotel | string> {
-    data.updatedAt = Date.now();
-    const findHotel = await this.HotelModel.findByIdAndUpdate(id.id, data, {
+    const payload = { ...data, updatedAt: Date.now() };
+    //data.updatedAt = Date.now();
+    const findHotel = await this.HotelModel.findByIdAndUpdate(id.id, payload, {
       // id.id - так как id приходит в виде объекта {id: 'значение'}, а нужно string!!
       new: true,
     })

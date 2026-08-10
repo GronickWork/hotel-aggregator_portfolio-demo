@@ -5,39 +5,86 @@ import {
   Param,
   Post,
   Put,
-  Query,
+  //Query,
   UseGuards,
 } from '@nestjs/common';
 import { HotelService } from './hotel.service';
-import type { createHotelDto } from '../Interfaces/dto/createHotelDto';
-import { Hotel, HotelDocument } from '../Schemas/hotel.schema';
-import type { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
+import { createHotelDto } from '../Interfaces/dto/createHotelDto';
+import { HotelDocument } from '../Schemas/hotel.schema';
+import { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
 import type { typeId } from '../../Users/Interfaces/param-id';
-import type { SearchHotelParams } from '../Interfaces/SearchHotelParams';
+//import type { SearchHotelParams } from '../Interfaces/SearchHotelParams';
+import { Roles } from '@app/guards/decorators/role.decorator';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
+import { RolesGuard } from '@app/guards/roles.guard';
 
-@Controller('/api')
-@UseGuards()
+@Controller('api')
+@ApiTags('hotels')
+@UseGuards(AuthJwtGuard, RolesGuard)
+@ApiBearerAuth('bearer')
 export class HotelController {
   constructor(private readonly hotelHSV: HotelService) {}
 
-  @Post('/admin/hotels/') // Метод проверен
+  @Post('admin/hotels/') // Метод проверен
+  @Roles('admin')
+  @ApiSecurity('bearer')
+  @ApiOperation({ summary: 'Добавление нового отеля (только для админа)' })
+  @ApiResponse({ status: 201, description: 'Отель успешно создан' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
+  @ApiBody({ type: createHotelDto })
   create(@Body() body: createHotelDto): Promise<Partial<HotelDocument> | null> {
     return this.hotelHSV.create(body);
   }
 
-  @Get('/admin/hotels/') // Метод проверен
+  @Get('admin/hotels/') // Метод проверен
+  @Roles('admin')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Получение списка гостиниц администратором. (только для админа)',
+  })
+  @ApiResponse({ status: 200, description: 'Список успешно получен' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
   getHotelsList(): Promise<Partial<HotelDocument>[]> {
     return this.hotelHSV.getHotelsList();
   }
 
-  @Get('/admin/hotels') // Метод проверен
+  /* @Get('admin/hotels') // Метод проверен
+  @Roles('admin')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Получение списка гостиниц администратором. (только для админа)',
+  })
+  @ApiResponse({ status: 200, description: 'Список успешно получен' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
   searchHotel(@Query() params: SearchHotelParams): Promise<Hotel[] | string> {
     return this.hotelHSV.search(params);
-  }
+  }*/
 
-  @Put('/admin/hotels/:id') // Метод проверен
+  @Put('admin/hotels/:id') // Метод проверен
+  @Roles('admin')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Изменение описания гостиницы администратором. (только для админа)',
+  })
+  @ApiParam({ name: 'id', required: true, type: String, description: 'ID отеля' })
+  @ApiResponse({ status: 200, description: 'Описание успешно изменено.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
+  @ApiBody({ type: UpdateHotelParams })
   updateHotel(
-    @Param() id: typeId,
+    @Param('id') id: typeId,
     @Body() body: UpdateHotelParams,
   ): Promise<Partial<HotelDocument> | null> {
     return this.hotelHSV.update(id, body);

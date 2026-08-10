@@ -16,7 +16,6 @@ export class GuestOnlyGuard implements CanActivate {
     } else if (typeof auth !== 'string') {
       auth = '';
     }
-    console.log('GuestOnlyGuard: header received:', auth);
     // Если есть любой Bearer-токен — запрещаем
     if (auth.startsWith('Bearer ')) {
       console.log('GuestOnlyGuard: token present → block');
@@ -24,8 +23,6 @@ export class GuestOnlyGuard implements CanActivate {
         'Действие доступно только неавторизованным пользователям',
       );
     }
-
-    console.log('GuestOnlyGuard: no token → allow');
     return true;
   }
 }

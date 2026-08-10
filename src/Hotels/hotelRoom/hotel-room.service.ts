@@ -61,6 +61,8 @@ export class HotelRoomService implements HotelRoomService {
   }
   /**Метод проверен */
   async search(data: SearchRoomsParams) {
+    const limit = data.limit ?? 10; // если нет — будет 10
+    const offset = data.offset ?? 0; // если нет — будет 0
     if (data.hotel) {
       const findRooms = await this.HotelRoom.find({
         hotel: { $regex: String(data.hotel), $options: 'i' },
@@ -69,7 +71,7 @@ export class HotelRoomService implements HotelRoomService {
         .select('-__v')
         .exec();
       return findRooms.length > 0
-        ? findRooms.slice(data.offset, data.offset + data.limit)
+        ? findRooms.slice(offset, offset + limit)
         : 'Номера с такими параметрами не найдены.';
     }
   }

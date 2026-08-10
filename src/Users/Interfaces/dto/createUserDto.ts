@@ -16,6 +16,6 @@ export class createUserDto {
   @ApiProperty({ description: 'Статус', example: 'client' })
   role!: 'client' | 'admin' | 'manager';
 
-  @ApiProperty({ description: 'Кто создал', example: 'self' })
+  @ApiProperty({ description: 'Кто создал', example: 'admin' })
   whoCreate!: 'self' | 'admin';
 }

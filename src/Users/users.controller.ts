@@ -28,7 +28,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Регистрация нового пользователя (только для админа)' })
   @ApiResponse({ status: 201, description: 'Пользователь успешно создан' })
   @ApiResponse({ status: 400, description: 'Ошибка валидации или дубликат email' })
-  @ApiResponse({ status: 403, description: 'Нет прав администратора' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
   @ApiBody({ type: createUserDto })
   create(@Body() body: createUserDto): Promise<Partial<UserDocument> | null> {
     return this.userSRV.create(body);
@@ -38,9 +38,8 @@ export class UsersController {
   @Roles('admin')
   @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для админа)' })
-  @ApiResponse({ status: 201, description: 'Список успешно получен' })
+  @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  //@ApiBody({ type: SearchUserParams })
   findAllForAdmin(@Query() params: SearchUserParams) {
     return this.userSRV.findAll(params);
   }
@@ -49,9 +48,8 @@ export class UsersController {
   @Roles('manager')
   @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для Менеджера)' })
-  @ApiResponse({ status: 201, description: 'Список успешно получен' })
+  @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  //@ApiBody({ type: SearchUserParams })
   findAllforManager(@Query() params: SearchUserParams) {
     return this.userSRV.findAll(params);
   }

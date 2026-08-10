@@ -76,6 +76,8 @@ export class UsersService implements IUserService {
   }
   /*Метод проверен */
   async findAll(params: SearchUserParams): Promise<UserDocument[]> {
+    const limit = params.limit ?? 10; // если нет — будет 10
+    const offset = params.offset ?? 0; // если нет — будет 0
     const name = params.name?.trim();
     const email = params.email?.trim();
     const contactPhone = params.contactPhone?.trim();
@@ -89,8 +91,8 @@ export class UsersService implements IUserService {
       throw new HttpException('Необходимо указать хотя бы один параметр для поиска', 400);
     }
     return await this.UserModel.find<UserDocument>({ $or: filters })
-      .limit(params.limit)
-      .skip(params.offset)
+      .limit(limit)
+      .skip(offset)
       .select(this.fields)
       .exec();
   }
