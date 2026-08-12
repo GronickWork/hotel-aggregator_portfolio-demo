@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { SessionModule } from './session/session.module';
 import { SupportRequestClientModule } from './SupportRequest/support-request-client/support-request-client.module';
 import { JwtAuthModule } from './jwt/jwt.module';
+import { HandlerFilesModule } from './handler-files/handler-files.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtAuthModule } from './jwt/jwt.module';
     SessionModule,
     SupportRequestClientModule,
     JwtAuthModule,
+    HandlerFilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

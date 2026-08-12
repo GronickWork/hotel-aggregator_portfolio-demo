@@ -63,17 +63,16 @@ export class HotelRoomService implements HotelRoomService {
   async search(data: SearchRoomsParams) {
     const limit = data.limit ?? 10; // если нет — будет 10
     const offset = data.offset ?? 0; // если нет — будет 0
+    const query: { isEnabled: true; hotel?: Types.ObjectId } = { isEnabled: true };
     if (data.hotel) {
-      const findRooms = await this.HotelRoom.find({
-        hotel: { $regex: String(data.hotel), $options: 'i' },
-        isEnabled: true,
-      })
-        .select('-__v')
-        .exec();
-      return findRooms.length > 0
-        ? findRooms.slice(offset, offset + limit)
-        : 'Номера с такими параметрами не найдены.';
+      query.hotel = new Types.ObjectId(String(data.hotel));
     }
+    const findRooms = await this.HotelRoom.find(query)
+      .select('-__v')
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    return findRooms;
   }
   /**Метод проверен */
   async update(

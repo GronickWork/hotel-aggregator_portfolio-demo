@@ -14,7 +14,8 @@ import { HotelService } from '../hotel/hotel.service';
 import path, { join } from 'path';
 import fs from 'fs';
 import { nanoid } from 'nanoid';
-type UploadedFile = Express.Multer.File;
+import { MulterFile } from 'multer';
+type UploadedFile = MulterFile;
 
 @Injectable()
 export class RoomFilesInterceptor implements NestInterceptor {
