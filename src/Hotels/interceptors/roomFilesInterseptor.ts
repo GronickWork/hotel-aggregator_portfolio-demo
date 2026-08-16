@@ -14,8 +14,6 @@ import { HotelService } from '../hotel/hotel.service';
 import path, { join } from 'path';
 import fs from 'fs';
 import { nanoid } from 'nanoid';
-import { MulterFile } from 'multer';
-type UploadedFile = MulterFile;
 
 @Injectable()
 export class RoomFilesInterceptor implements NestInterceptor {
@@ -61,7 +59,7 @@ export class RoomFilesInterceptor implements NestInterceptor {
     return this.allowedTypes.includes(mimeType) ? true : false;
   }
 
-  async saveImageStorage(file: UploadedFile): Promise<void | string> {
+  async saveImageStorage(file: Express.Multer.File): Promise<void | string> {
     try {
       /**Генерация уникального имени файла - можно раскомментировать и использовать при необходимости
        * функция writeFile() - не записывает файл, если он уже существует, поэтому при генерации уникального имени файла с помощью nanoid,

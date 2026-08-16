@@ -6,16 +6,8 @@ export class createRoomDto {
   hotel?: typeId;
 
   @ApiProperty({
-    description: 'Описание отеля',
-    example: 'Нижний Новгород, Ильинская улица, 3, 750м до центра',
+    description: 'Описание номера',
+    example: 'Двухместный номер Business',
   })
   description?: string;
-
-  @ApiProperty({
-    description: 'Список URL изображений',
-    example: ['himgStorage/prime1.jpeg, imgStorage/prime2.jpeg'],
-    type: [String],
-    isArray: true,
-  })
-  images?: string[];
 }

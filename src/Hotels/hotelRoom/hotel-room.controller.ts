@@ -10,10 +10,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { HotelRoomService } from './hotel-room.service';
-import type { createRoomDto } from '../Interfaces/dto/createRoomDto';
-import { RoomFilesInterceptor } from '../interceptors/roomFilesInterseptor';
+import { createRoomDto } from '../Interfaces/dto/createRoomDto';
+//import { RoomFilesInterceptor } from '../interceptors/roomFilesInterseptor';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import type { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
+import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
 import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
 import { Types } from 'mongoose';
 import {
@@ -24,9 +24,12 @@ import {
   ApiBearerAuth,
   ApiSecurity,
   ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
 import { RolesGuard } from '@app/guards/roles.guard';
+import { FilesRoomInterceptor } from '../interceptors/files-room-interceptors';
+import { Roles } from '@app/guards/decorators/role.decorator';
 
 @Controller('api')
 @ApiTags('hotels')
@@ -56,6 +59,7 @@ export class HotelRoomController {
   }
 
   @Post('admin/hotel-rooms') // Метод проверен
+  @Roles('admin')
   @UseGuards(AuthJwtGuard, RolesGuard)
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
@@ -64,13 +68,36 @@ export class HotelRoomController {
   @ApiResponse({ status: 201, description: 'Номер успешно создан' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  @UseInterceptors(AnyFilesInterceptor(), RoomFilesInterceptor)
+  @UseInterceptors(AnyFilesInterceptor(), FilesRoomInterceptor)
+  @ApiBody({ type: createRoomDto })
+  @ApiParam({
+    name: 'images',
+    description: 'Файлы изображений',
+    required: false,
+    type: 'file', // ← вот это заставляет Swagger показать кнопку загрузки
+  })
   createHotelRoom(@Body() dto: createRoomDto) {
     return this.hotelRSV.create(dto);
   }
 
   @Put('admin/hotel-rooms/:id') // Метод проверен
-  @UseInterceptors(AnyFilesInterceptor(), RoomFilesInterceptor)
+  @UseInterceptors(AnyFilesInterceptor(), FilesRoomInterceptor)
+  @Roles('admin')
+  @UseGuards(AuthJwtGuard, RolesGuard)
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Изменение номера отеля (только для админа)' })
+  @ApiResponse({ status: 201, description: 'Номер успешно измене' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
+  @ApiBody({ type: updateRoomDto })
+  @ApiParam({
+    name: 'images',
+    description: 'Файлы изображений',
+    required: false,
+    type: 'file', // ← вот это заставляет Swagger показать кнопку загрузки
+  })
   updateHotelRoom(@Param('id') id: Types.ObjectId, @Body() body: updateRoomDto) {
     return this.hotelRSV.update(id, body);
   }
