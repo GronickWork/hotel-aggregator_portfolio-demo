@@ -21,11 +21,10 @@ export class HandlerFilesService {
       return pathFile;
     } else {
       // create: уникальное имя через nanoid
-      const ext = path.extname(baseName);
-      const uniqueName = `${nanoid(5)}_${ext}`;
+      const uniqueName = `${nanoid(5)}_${baseName}`;
       const pathFile = path.join(dir, uniqueName);
       await fs.promises.writeFile(pathFile, file.buffer);
-      return pathFile;
+      return path.relative(process.cwd(), pathFile).replace(/\\/g, '/');
     }
   }
 

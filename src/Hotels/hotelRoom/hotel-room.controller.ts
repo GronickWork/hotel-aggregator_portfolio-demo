@@ -12,7 +12,7 @@ import {
 import { HotelRoomService } from './hotel-room.service';
 import { createRoomDto } from '../Interfaces/dto/createRoomDto';
 //import { RoomFilesInterceptor } from '../interceptors/roomFilesInterseptor';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
 import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
 import { Types } from 'mongoose';
@@ -68,13 +68,22 @@ export class HotelRoomController {
   @ApiResponse({ status: 201, description: 'Номер успешно создан' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  @UseInterceptors(AnyFilesInterceptor(), FilesRoomInterceptor)
-  @ApiBody({ type: createRoomDto })
-  @ApiParam({
-    name: 'images',
-    description: 'Файлы изображений',
-    required: false,
-    type: 'file', // ← вот это заставляет Swagger показать кнопку загрузки
+  @UseInterceptors(FilesInterceptor('images', 10), FilesRoomInterceptor)
+  @ApiBody({
+    description: 'hotel, description — form-data; images — файлы (form-data, несколько)',
+    schema: {
+      type: 'object',
+      properties: {
+        hotel: { type: 'string', example: '69a19bff016224f814e81b7f' },
+        description: { type: 'string', example: 'Двухместный номер на двоих' },
+        images: {
+          type: 'array',
+          items: { type: 'file' }, // <-- это даёт кнопку загрузки в Swagger
+          description: 'Файлы изображений (несколько)',
+        },
+      },
+      required: ['hotel', 'description'],
+    },
   })
   createHotelRoom(@Body() dto: createRoomDto) {
     return this.hotelRSV.create(dto);

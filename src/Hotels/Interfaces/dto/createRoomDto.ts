@@ -1,13 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { typeId } from '../../../Users/Interfaces/param-id';
+import { IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class createRoomDto {
   @ApiProperty({ description: 'Id отеля', example: '698ef61ee3768e4538208a85' })
-  hotel?: typeId;
+  @IsString()
+  @IsMongoId()
+  hotel!: string;
 
   @ApiProperty({
     description: 'Описание номера',
     example: 'Двухместный номер Business',
   })
-  description?: string;
+  @IsString()
+  description!: string;
+
+  @IsOptional()
+  images?: string[];
 }

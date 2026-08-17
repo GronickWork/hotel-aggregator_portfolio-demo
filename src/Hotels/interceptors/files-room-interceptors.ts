@@ -26,7 +26,7 @@ export class FilesRoomInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest(); // Перехват тела запроса
     if (!request.files) return next.handle();
     for (const file of request.files) {
-      if (this.fileService.typeFilter(file.mimetype)) {
+      if (!this.fileService.typeFilter(file.mimetype)) {
         throw new BadRequestException('Недопустимый тип файла');
       }
       const savedPath = await this.fileService.handlerFile(file, dir);
