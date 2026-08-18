@@ -12,7 +12,7 @@ import {
 import { HotelRoomService } from './hotel-room.service';
 import { createRoomDto } from '../Interfaces/dto/createRoomDto';
 //import { RoomFilesInterceptor } from '../interceptors/roomFilesInterseptor';
-import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
 import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
 import { Types } from 'mongoose';
@@ -90,7 +90,6 @@ export class HotelRoomController {
   }
 
   @Put('admin/hotel-rooms/:id') // Метод проверен
-  @UseInterceptors(AnyFilesInterceptor(), FilesRoomInterceptor)
   @Roles('admin')
   @UseGuards(AuthJwtGuard, RolesGuard)
   @ApiBearerAuth('bearer')
@@ -100,14 +99,22 @@ export class HotelRoomController {
   @ApiResponse({ status: 201, description: 'Номер успешно измене' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  @ApiBody({ type: updateRoomDto })
-  @ApiParam({
-    name: 'images',
-    description: 'Файлы изображений',
-    required: false,
-    type: 'file', // ← вот это заставляет Swagger показать кнопку загрузки
+  @UseInterceptors(FilesInterceptor('images', 10), FilesRoomInterceptor)
+  @ApiBody({
+    description: 'description — form-data; images — файлы (form-data, несколько)',
+    schema: {
+      type: 'object',
+      properties: {
+        description: { type: 'string', example: 'Двухместный номер на двоих' },
+        images: {
+          type: 'array',
+          items: { type: 'file' }, // <-- это даёт кнопку загрузки в Swagger
+          description: 'Файлы изображений (несколько)',
+        },
+      },
+    },
   })
-  updateHotelRoom(@Param('id') id: Types.ObjectId, @Body() body: updateRoomDto) {
+  updateHotelRoom(@Param('id') id: string, @Body() body: updateRoomDto) {
     return this.hotelRSV.update(id, body);
   }
 }

@@ -63,9 +63,7 @@ export class HotelService implements IHotelService {
   /**Метод проверен */
   async update(id: typeId, data: UpdateHotelParams): Promise<Hotel | string> {
     const payload = { ...data, updatedAt: Date.now() };
-    //data.updatedAt = Date.now();
-    const findHotel = await this.HotelModel.findByIdAndUpdate(id.id, payload, {
-      // id.id - так как id приходит в виде объекта {id: 'значение'}, а нужно string!!
+    const findHotel = await this.HotelModel.findByIdAndUpdate(id, payload, {
       new: true,
     })
       .select('_id title description')

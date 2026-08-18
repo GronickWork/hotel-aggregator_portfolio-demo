@@ -59,19 +59,6 @@ export class HotelController {
     return this.hotelHSV.getHotelsList();
   }
 
-  /* @Get('admin/hotels') // Метод проверен
-  @Roles('admin')
-  @ApiSecurity('bearer')
-  @ApiOperation({
-    summary: 'Получение списка гостиниц администратором. (только для админа)',
-  })
-  @ApiResponse({ status: 200, description: 'Список успешно получен' })
-  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
-  @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  searchHotel(@Query() params: SearchHotelParams): Promise<Hotel[] | string> {
-    return this.hotelHSV.search(params);
-  }*/
-
   @Put('admin/hotels/:id') // Метод проверен
   @Roles('admin')
   @ApiSecurity('bearer')
@@ -87,6 +74,7 @@ export class HotelController {
     @Param('id') id: typeId,
     @Body() body: UpdateHotelParams,
   ): Promise<Partial<HotelDocument> | null> {
+    console.log(' from HotelController.updateHotel id: ', id);
     return this.hotelHSV.update(id, body);
   }
 }

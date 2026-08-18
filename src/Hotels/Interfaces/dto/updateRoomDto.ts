@@ -1,13 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
 export class updateRoomDto {
-  @ApiProperty({ description: 'Описание номера', example: 'Двухместный номер Business' })
+  @IsOptional()
+  @ApiProperty({
+    description: 'Описание номера',
+    example: 'Как-то меняем описание',
+    required: false,
+  })
+  @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Id отеля', example: '698ef61ee3768e4538208a85' })
+  //@ApiProperty({ description: 'Id номера', example: '698ef61ee3768e4538208a85' })
   hotelId?: string;
 
-  images?: string[];
+  //images?: string[];
 
   isEnabled?: boolean;
   updatedAt?: Date;

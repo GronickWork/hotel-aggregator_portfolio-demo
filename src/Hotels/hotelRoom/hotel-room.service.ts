@@ -76,15 +76,16 @@ export class HotelRoomService implements HotelRoomService {
   }
   /**Метод проверен */
   async update(
-    id: Types.ObjectId,
+    id: string,
     data: updateRoomDto,
   ): Promise<Partial<ShowRoomData> | null | string> {
     data.updatedAt = new Date();
-    const updatedRoom = await this.HotelRoom.findByIdAndUpdate(id, data, {
+    const objectId = new Types.ObjectId(id);
+    const updatedRoom = await this.HotelRoom.findByIdAndUpdate(objectId, data, {
       new: true,
     });
     if (updatedRoom) {
-      return this.findById(id);
+      return this.findById(objectId);
     } else {
       return null;
     }

@@ -18,7 +18,7 @@ export class HandlerFilesService {
       // update: перезаписываем файл
       const pathFile = path.join(dir, baseName);
       await fs.promises.writeFile(pathFile, file.buffer);
-      return pathFile;
+      return path.relative(process.cwd(), pathFile).replace(/\\/g, '/');
     } else {
       // create: уникальное имя через nanoid
       const uniqueName = `${nanoid(5)}_${baseName}`;
