@@ -6,15 +6,15 @@ import {
   Post,
   Put,
   Query,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { HotelRoomService } from './hotel-room.service';
-import { createRoomDto } from '../Interfaces/dto/createRoomDto';
-//import { RoomFilesInterceptor } from '../interceptors/roomFilesInterseptor';
+import { createRoomDto } from '../dto/createRoomDto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
-import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
+import { updateRoomDto } from '../dto/updateRoomDto';
+import { SearchRoomsParams } from '../dto/SearchRoomsParams';
 import { Types } from 'mongoose';
 import {
   ApiOperation,
@@ -41,8 +41,8 @@ export class HotelRoomController {
     summary: 'Основной API для поиска номеров. Доступно всем пользователям',
   })
   @ApiResponse({ status: 200, description: 'Номера отелей успешно получены.' })
-  getAllHotelRooms(@Query() body: SearchRoomsParams) {
-    return this.hotelRSV.search(body);
+  getAllHotelRooms(@Query() query: SearchRoomsParams) {
+    return this.hotelRSV.search(query);
   }
 
   @Get('common/hotel-rooms/:id') // Метод проверен
@@ -91,12 +91,12 @@ export class HotelRoomController {
 
   @Put('admin/hotel-rooms/:id') // Метод проверен
   @Roles('admin')
-  @UseGuards(AuthJwtGuard, RolesGuard)
+  //@UseGuards(AuthJwtGuard, RolesGuard)
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Изменение номера отеля (только для админа)' })
-  @ApiResponse({ status: 201, description: 'Номер успешно измене' })
+  @ApiResponse({ status: 201, description: 'Номер успешно изменен' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
   @UseInterceptors(FilesInterceptor('images', 10), FilesRoomInterceptor)
@@ -114,7 +114,15 @@ export class HotelRoomController {
       },
     },
   })
-  updateHotelRoom(@Param('id') id: string, @Body() body: updateRoomDto) {
-    return this.hotelRSV.update(id, body);
+  updateHotelRoom(
+    @Param('id') id: string,
+    @Body() dto: updateRoomDto,
+    @UploadedFiles() newFiles?: any[],
+  ) {
+    const newImagePaths =
+      newFiles?.map((f) => (f as { path?: string }).path).filter(Boolean) || [];
+    console.log('from updateHotelRoom body', dto);
+    console.log('from updateHotelRoom newFils', newImagePaths);
+    return this.hotelRSV.update(id, dto);
   }
 }

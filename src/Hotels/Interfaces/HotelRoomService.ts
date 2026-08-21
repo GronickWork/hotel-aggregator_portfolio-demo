@@ -1,6 +1,6 @@
 import { HotelRoom } from '../../Hotels/Schemas/hotel.room.schema';
 import { typeId } from '../../Users/Interfaces/param-id';
-import { SearchRoomsParams } from './SearchRoomsParams';
+import { SearchRoomsParams } from '../dto/SearchRoomsParams';
 
 export interface HotelRoomService {
   create(data: Partial<HotelRoom>): Promise<HotelRoom>;

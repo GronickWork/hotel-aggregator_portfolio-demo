@@ -14,7 +14,7 @@ export class updateRoomDto {
   //@ApiProperty({ description: 'Id номера', example: '698ef61ee3768e4538208a85' })
   hotelId?: string;
 
-  //images?: string[];
+  images?: string[];
 
   isEnabled?: boolean;
   updatedAt?: Date;

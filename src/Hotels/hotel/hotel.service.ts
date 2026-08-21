@@ -3,7 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Hotel, HotelDocument } from '../Schemas/hotel.schema';
 import { Connection, Model, Types } from 'mongoose';
-import { createHotelDto } from '../Interfaces/dto/createHotelDto';
+import { createHotelDto } from '../dto/createHotelDto';
 import { IHotelService } from '../Interfaces/IHotelService';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { SearchHotelParams } from '../Interfaces/SearchHotelParams';

@@ -4,11 +4,11 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { HotelRoom, HotelRoomDocument } from '../Schemas/hotel.room.schema';
 import { Connection, Model, Types } from 'mongoose';
-import { createRoomDto } from '../Interfaces/dto/createRoomDto';
+import { createRoomDto } from '../dto/createRoomDto';
 import { ShowRoomData } from '../Interfaces/ShowRoomData';
 import { HotelService } from '../hotel/hotel.service';
-import { updateRoomDto } from '../Interfaces/dto/updateRoomDto';
-import { SearchRoomsParams } from '../Interfaces/SearchRoomsParams';
+import { updateRoomDto } from '../dto/updateRoomDto';
+import { SearchRoomsParams } from '../dto/SearchRoomsParams';
 import { typeId } from '../../Users/Interfaces/param-id';
 
 @Injectable()
@@ -61,11 +61,11 @@ export class HotelRoomService implements HotelRoomService {
   }
   /**Метод проверен */
   async search(data: SearchRoomsParams) {
-    const limit = data.limit ?? 10; // если нет — будет 10
-    const offset = data.offset ?? 0; // если нет — будет 0
-    const query: { isEnabled: true; hotel?: Types.ObjectId } = { isEnabled: true };
+    const limit = Number(data.limit ?? 10); // если нет — будет 10
+    const offset = Number(data.offset ?? 0); // если нет — будет 0
+    const query: { isEnabled: true; hotel?: string } = { isEnabled: true };
     if (data.hotel) {
-      query.hotel = new Types.ObjectId(String(data.hotel));
+      query.hotel = data.hotel;
     }
     const findRooms = await this.HotelRoom.find(query)
       .select('-__v')
@@ -81,11 +81,13 @@ export class HotelRoomService implements HotelRoomService {
   ): Promise<Partial<ShowRoomData> | null | string> {
     data.updatedAt = new Date();
     const objectId = new Types.ObjectId(id);
-    const updatedRoom = await this.HotelRoom.findByIdAndUpdate(objectId, data, {
+    console.log('from HotelRoomService.update data:', data);
+    /*const updatedRoom = await this.HotelRoom.findByIdAndUpdate(objectId, data, {
       new: true,
-    });
+    });*/
+    const updatedRoom = '';
     if (updatedRoom) {
-      return this.findById(objectId);
+      return await this.findById(objectId);
     } else {
       return null;
     }

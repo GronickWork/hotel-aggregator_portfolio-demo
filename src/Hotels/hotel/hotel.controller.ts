@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { HotelService } from './hotel.service';
-import { createHotelDto } from '../Interfaces/dto/createHotelDto';
+import { createHotelDto } from '../dto/createHotelDto';
 import { HotelDocument } from '../Schemas/hotel.schema';
 import { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
 import type { typeId } from '../../Users/Interfaces/param-id';
