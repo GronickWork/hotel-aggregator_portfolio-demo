@@ -33,7 +33,6 @@ export class FilesRoomInterceptor implements NestInterceptor {
       paths.push(savedPath);
     }
     request.body = { ...request.body, images: paths };
-    console.log('from FilesRoomInterceptor request.body', request.body);
     return next.handle();
   }
 }

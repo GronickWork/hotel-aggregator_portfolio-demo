@@ -6,7 +6,6 @@ import {
   Post,
   Put,
   Query,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -91,7 +90,7 @@ export class HotelRoomController {
 
   @Put('admin/hotel-rooms/:id') // Метод проверен
   @Roles('admin')
-  //@UseGuards(AuthJwtGuard, RolesGuard)
+  @UseGuards(AuthJwtGuard, RolesGuard)
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
   @ApiConsumes('multipart/form-data')
@@ -114,15 +113,7 @@ export class HotelRoomController {
       },
     },
   })
-  updateHotelRoom(
-    @Param('id') id: string,
-    @Body() dto: updateRoomDto,
-    @UploadedFiles() newFiles?: any[],
-  ) {
-    const newImagePaths =
-      newFiles?.map((f) => (f as { path?: string }).path).filter(Boolean) || [];
-    console.log('from updateHotelRoom body', dto);
-    console.log('from updateHotelRoom newFils', newImagePaths);
+  updateHotelRoom(@Param('id') id: string, @Body() dto: updateRoomDto) {
     return this.hotelRSV.update(id, dto);
   }
 }

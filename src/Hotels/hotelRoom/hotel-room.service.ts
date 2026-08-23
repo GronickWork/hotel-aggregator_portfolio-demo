@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable no-useless-catch */
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -79,13 +78,22 @@ export class HotelRoomService implements HotelRoomService {
     id: string,
     data: updateRoomDto,
   ): Promise<Partial<ShowRoomData> | null | string> {
-    data.updatedAt = new Date();
     const objectId = new Types.ObjectId(id);
-    console.log('from HotelRoomService.update data:', data);
-    /*const updatedRoom = await this.HotelRoom.findByIdAndUpdate(objectId, data, {
+    const findList = await this.HotelRoom.findById(objectId).select('images').lean();
+    const existingImages: string[] = findList?.images || [];
+    const payload: Partial<updateRoomDto> = {};
+    if (data.description !== undefined) payload.description = data.description;
+    payload.updatedAt = new Date();
+    if (Array.isArray(data.images) && data.images.length > 0) {
+      const newImages = data.images.filter((p) => !existingImages.includes(p)); // фильтруем от дублей
+      payload.images = [...existingImages, ...newImages];
+    }
+    console.log('from HotelRoomService.update data:', payload);
+
+    const updatedRoom = await this.HotelRoom.findByIdAndUpdate(objectId, payload, {
       new: true,
-    });*/
-    const updatedRoom = '';
+    });
+    //const updatedRoom = '';
     if (updatedRoom) {
       return await this.findById(objectId);
     } else {
