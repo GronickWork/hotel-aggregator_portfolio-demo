@@ -11,7 +11,7 @@ import { HotelRoomService } from '../Hotels/hotelRoom/hotel-room.service';
 import { HotelRoom } from '../Hotels/Schemas/hotel.room.schema';
 import { Hotel } from '../Hotels/Schemas/hotel.schema';
 import { typeId } from '../Users/Interfaces/param-id';
-import { ReservationDto } from './Interfaces/dto/ReservationDto';
+import { ReservationDto } from './dto/ReservationDto';
 import { IReservation } from './Interfaces/IReservation';
 import { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
 import { ReservationFilters } from './Interfaces/ReservationFilters';

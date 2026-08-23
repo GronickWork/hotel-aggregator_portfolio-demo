@@ -1,6 +1,6 @@
 import { typeId } from '../../Users/Interfaces/param-id';
 import { ReservationSearchOptions } from './ReservationSearchOptions';
-import { ReservationDto } from './dto/ReservationDto';
+import { ReservationDto } from '../dto/ReservationDto';
 import { outReservation } from './OutReservation';
 
 export interface IReservation {

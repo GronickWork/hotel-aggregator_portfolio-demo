@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { HotelRoomService } from '../../Hotels/hotelRoom/hotel-room.service';
-import { ReservationDto } from '../Interfaces/dto/ReservationDto';
+import { ReservationDto } from '../dto/ReservationDto';
 
 @Injectable()
 export class CreateReserveInterceptor implements NestInterceptor {
@@ -35,14 +35,14 @@ export class CreateReserveInterceptor implements NestInterceptor {
         400,
       );
     }
-    this.newData = {
+    const userId = request.user?.userId;
+    request.body = {
       roomId: data.hotelRoom,
-      userId: request.session?.userId,
+      userId,
       hotelId: room.hotel ? room.hotel.id : data.hotelId,
       dateStart: new Date(data.dateStart), // Преобразование строки в объект Date ISO 8601
       dateEnd: new Date(data.dateEnd),
-    };
-    request.body = this.newData; // Замена тела запроса на newData
+    }; // Замена тела запроса
     return next.handle().pipe(map((data) => data));
   }
 }

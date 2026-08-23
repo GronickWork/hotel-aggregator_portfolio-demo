@@ -15,19 +15,48 @@ import {
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import type { typeId } from '../Users/Interfaces/param-id';
-import type { ReservationDto } from './Interfaces/dto/ReservationDto';
+import type { ReservationDto } from './dto/ReservationDto';
 import { CreateReserveInterceptor } from './interceptors/createReserveInterceptor';
 import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
 import { IdReservationGuard } from '../guards/id-reservation.guard';
 import moment from 'moment';
+import { Roles } from '@app/guards/decorators/role.decorator';
+//import { AuthGuard } from '@nestjs/passport';
+//import { RolesGuard } from '@app/guards/roles.guard';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ClientReserveDto } from './dto/ClientReserveDto';
+import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
+import { RolesGuard } from '@app/guards/roles.guard';
 
-@Controller('/api')
-@UseGuards()
+@Controller('api')
+@ApiTags('reservations')
+@UseGuards(AuthJwtGuard, RolesGuard)
 export class ReservationController {
   constructor(private readonly RrnService: ReservationService) {}
 
-  @Post('/client/reservations') //Метод проверен
+  @Roles('client')
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Бронирование номера клиентом (только для пользователей с ролью client)',
+  })
+  @ApiResponse({ status: 201, description: 'Номер успешно Забронирован' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @ApiResponse({
+    status: 400,
+    description: 'Номера с указанным ID не существует или он отключён.',
+  })
+  @ApiBody({ type: ClientReserveDto })
   @UseInterceptors(CreateReserveInterceptor)
+  @Post('client/reservations') //Метод проверен
   reserve(@Body() data: ReservationDto) {
     return this.RrnService.addReservation(data);
   }
