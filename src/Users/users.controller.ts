@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDocument } from './schemas/user.schema';
 import { createUserDto } from './Interfaces/dto/createUserDto';
@@ -40,8 +40,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Получение списка пользователей (только для админа)' })
   @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  findAllForAdmin(@Query() params: SearchUserParams) {
-    return this.userSRV.findAll(params);
+  findAllForAdmin(@Query() params: SearchUserParams, @Req() req: Request) {
+    const user = req as unknown as { user: { role: string } };
+    const { role } = user.user;
+    return this.userSRV.findAll(params, role);
   }
 
   @Get('manager/users/') //Метод проверен
@@ -50,7 +52,9 @@ export class UsersController {
   @ApiOperation({ summary: 'Получение списка пользователей (только для Менеджера)' })
   @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
-  findAllforManager(@Query() params: SearchUserParams) {
-    return this.userSRV.findAll(params);
+  findAllforManager(@Query() params: SearchUserParams, @Req() req: Request) {
+    const user = req as unknown as { user: { role: string } };
+    const { role } = user.user;
+    return this.userSRV.findAll(params, role);
   }
 }

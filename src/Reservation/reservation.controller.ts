@@ -5,11 +5,12 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
+  //HttpException,
   Param,
   Post,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,9 +18,9 @@ import { ReservationService } from './reservation.service';
 import type { typeId } from '../Users/Interfaces/param-id';
 import type { ReservationDto } from './dto/ReservationDto';
 import { CreateReserveInterceptor } from './interceptors/createReserveInterceptor';
-import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
+//import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
 import { IdReservationGuard } from '../guards/id-reservation.guard';
-import moment from 'moment';
+//import moment from 'moment';
 import { Roles } from '@app/guards/decorators/role.decorator';
 //import { AuthGuard } from '@nestjs/passport';
 //import { RolesGuard } from '@app/guards/roles.guard';
@@ -27,6 +28,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiSecurity,
   ApiTags,
@@ -34,6 +36,7 @@ import {
 import { ClientReserveDto } from './dto/ClientReserveDto';
 import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
 import { RolesGuard } from '@app/guards/roles.guard';
+import { ReservationQueryDto } from './dto/reservation-query.dto';
 
 @Controller('api')
 @ApiTags('reservations')
@@ -47,7 +50,7 @@ export class ReservationController {
   @ApiOperation({
     summary: 'Бронирование номера клиентом (только для пользователей с ролью client)',
   })
-  @ApiResponse({ status: 201, description: 'Номер успешно Забронирован' })
+  @ApiResponse({ status: 201, description: 'Номер успешно забронирован' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
   @ApiResponse({
@@ -61,27 +64,48 @@ export class ReservationController {
     return this.RrnService.addReservation(data);
   }
 
+  @Roles('client')
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary:
+      'Список броней текущего пользователя (только для пользователей с ролью client)',
+  })
+  @ApiResponse({ status: 201, description: 'Номера успешно получены' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
   @Get('/client/reservations')
   getReservationsByClient(@Req() req) {
-    const sesionId = req.session?.userId;
-    const filters: ReservationSearchOptions = { userId: sesionId as typeId };
-    return this.RrnService.getReservations(filters);
+    const userId = req.user.userId; // Сюда userId приходит из JWT‑стратегии + Passport.
+    if (!userId) {
+      throw new UnauthorizedException('Пользователь не авторизован');
+    }
+    return this.RrnService.getReservations({ userId });
   }
 
+  @Roles('manager')
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary:
+      'Список броней конкретного пользователя (только для пользователей с ролью manager)',
+  })
+  @ApiResponse({ status: 201, description: 'Номера успешно получены' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не manager' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'ID конкретного пользователя',
+  })
   @Get('/manager/reservations/:id') //Метод проверен
-  getReservations(
-    @Param('id') id: string,
-    @Query('dateStart') dateStart?: string,
-    @Query('dateEnd') dateEnd?: string,
-  ) {
-    const dateFormatRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-    if (dateStart && !dateFormatRegex.test(dateStart))
-      throw new HttpException('Параметр dateStart должен быть в формате ГГГГ-ММ-ДД', 400);
-    if (dateEnd && !dateFormatRegex.test(dateEnd))
-      throw new HttpException('Параметр dateEnd должен быть в формате ГГГГ-ММ-ДД', 400);
-    const filters: ReservationSearchOptions = { userId: id as typeId };
-    if (dateStart) filters.dateStart = moment(dateStart).toDate();
-    if (dateEnd) filters.dateStart = moment(dateEnd).toDate();
+  getReservations(@Param('id') id: string, @Query() dto: ReservationQueryDto) {
+    const filters = {
+      userId: id as typeId,
+      dateStart: dto.dateStart,
+      dateEnd: dto.dateEnd,
+    };
     return this.RrnService.getReservations(filters);
   }
 

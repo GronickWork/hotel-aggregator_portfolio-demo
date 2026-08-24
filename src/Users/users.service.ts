@@ -5,7 +5,7 @@ import { typeId } from './Interfaces/param-id';
 import { SearchUserParams } from './Interfaces/SearchUserParams';
 import { User, UserDocument } from './schemas/user.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model } from 'mongoose';
+import { Connection, Model, QueryFilter } from 'mongoose';
 import { createUserDto } from './Interfaces/dto/createUserDto';
 import { IUserService } from './Interfaces/IUserService';
 import { generate } from 'generate-password';
@@ -75,9 +75,16 @@ export class UsersService implements IUserService {
     }
   }
   /*Метод проверен */
-  async findAll(params: SearchUserParams): Promise<UserDocument[]> {
+  async findAll(params: SearchUserParams, Role: string): Promise<UserDocument[]> {
     const limit = params.limit ?? 10; // если нет — будет 10
     const offset = params.offset ?? 0; // если нет — будет 0
+    // Итговый фильтр по ролям
+    const finalFilter: Record<string, unknown> = {};
+    if (Role === 'manager') {
+      finalFilter.role = { $in: ['client'] };
+    }
+    // Для 'admin' оставляем finalFilter пустым — он видит всех
+    // 2. Фильтры по полям (поиск)
     const name = params.name?.trim();
     const email = params.email?.trim();
     const contactPhone = params.contactPhone?.trim();
@@ -87,10 +94,16 @@ export class UsersService implements IUserService {
     if (email) filters.push({ email: { $regex: email, $options: 'i' } });
     if (contactPhone) filters.push({ contactPhone: { $regex: contactPhone } });
 
-    if (filters.length === 0) {
-      throw new HttpException('Необходимо указать хотя бы один параметр для поиска', 400);
+    // 3. Объединяем фильтры
+    let query: QueryFilter<UserDocument>;
+    if (filters.length > 0) {
+      query = {
+        $and: [finalFilter, { $or: filters }],
+      };
+    } else {
+      query = finalFilter;
     }
-    return await this.UserModel.find<UserDocument>({ $or: filters })
+    return await this.UserModel.find<UserDocument>(query)
       .limit(limit)
       .skip(offset)
       .select(this.fields)
