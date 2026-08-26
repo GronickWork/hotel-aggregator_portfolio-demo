@@ -1,7 +1,7 @@
-import { CreateSupportRequestDto } from './dto/CreateSupportRequestDto';
-import { MarkMessagesAsReadDto } from './dto/MarkMessagesAsReadDto';
+import { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
+import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { ReplyMessageClient } from './ReplyMessageClient';
-import { GetUnreadDto } from './dto/GetUnreadDto';
+import { GetUnreadDto } from '../dto/GetUnreadDto';
 
 export interface ISupportRequestClientService {
   createSupportRequest(data: CreateSupportRequestDto): Promise<ReplyMessageClient>;

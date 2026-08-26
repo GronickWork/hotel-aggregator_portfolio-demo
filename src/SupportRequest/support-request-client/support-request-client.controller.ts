@@ -3,10 +3,12 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { SupportRequestClientService } from './support-request-client.service';
 import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
-import type { CreateSupportRequestDto } from '../Interfaces/dto/CreateSupportRequestDto';
+import type { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
 import { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('api')
+@ApiTags('')
 @UseGuards(AuthJwtGuard)
 export class SupportRequestClientController {
   constructor(private readonly SRCService: SupportRequestClientService) {}

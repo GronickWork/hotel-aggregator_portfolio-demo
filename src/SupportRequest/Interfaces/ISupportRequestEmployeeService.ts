@@ -1,6 +1,6 @@
 import { typeId } from '../../Users/Interfaces/param-id';
-import { MarkMessagesAsReadDto } from './dto/MarkMessagesAsReadDto';
-import { GetUnreadDto } from './dto/GetUnreadDto';
+import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
+import { GetUnreadDto } from '../dto/GetUnreadDto';
 
 export interface ISupportRequestEmployeeService {
   markMessagesAsRead(params: MarkMessagesAsReadDto);

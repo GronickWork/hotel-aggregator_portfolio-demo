@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { SendMessageDto } from '../Interfaces/dto/SendMessageDto';
+import type { SendMessageDto } from '../dto/SendMessageDto';
 import { SupportRequestService } from './support-request.service';
 import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import type { GetChatListParams } from '../Interfaces/GetChatListParams';
@@ -18,9 +18,9 @@ import type { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 import { ReplyMessageManager } from '../Interfaces/ReplyMessageManager';
 import { SupportRequestGuard } from '../../guards/support-request.guard';
 import { ReplySendMessages } from '../Interfaces/ReplySendMessages';
-import { MarkMessagesAsReadDto } from '../Interfaces/dto/MarkMessagesAsReadDto';
+import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
-import { GetUnreadDto } from '../Interfaces/dto/GetUnreadDto';
+import { GetUnreadDto } from '../dto/GetUnreadDto';
 
 @Controller('/api')
 @UseGuards(AuthJwtGuard)

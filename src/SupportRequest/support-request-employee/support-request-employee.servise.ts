@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { MarkMessagesAsReadDto } from '../Interfaces/dto/MarkMessagesAsReadDto';
+import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { InjectModel } from '@nestjs/mongoose';
 import { SupportRequest } from '../schemas/supportRequest.schema';
 import { Model } from 'mongoose';
 import { Message } from '../schemas/message.schema';
 import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
-import { GetUnreadDto } from '../Interfaces/dto/GetUnreadDto';
+import { GetUnreadDto } from '../dto/GetUnreadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { ISupportRequestEmployeeService } from '../Interfaces/ISupportRequestEmployeeService';
 

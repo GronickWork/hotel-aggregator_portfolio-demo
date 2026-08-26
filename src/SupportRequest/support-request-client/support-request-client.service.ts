@@ -2,18 +2,18 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { ISupportRequestClientService } from '../Interfaces/ISupportRequestClientService';
 import { typeId } from '../../Users/Interfaces/param-id';
-import { CreateSupportRequestDto } from '../Interfaces/dto/CreateSupportRequestDto';
+import { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
 import { ReplyMessageClient } from '../Interfaces/ReplyMessageClient';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message } from '../schemas/message.schema';
-import { CreateMessageDto } from '../Interfaces/dto/CreateMessageDto';
+import { CreateMessageDto } from '../dto/CreateMessageDto';
 import { SupportRequest } from '../schemas/supportRequest.schema';
 import { ReplySendMessages } from '../Interfaces/ReplySendMessages';
 import { UsersService } from '../../Users/users.service';
 import moment from 'moment';
-import { MarkMessagesAsReadDto } from '../Interfaces/dto/MarkMessagesAsReadDto';
-import { GetUnreadDto } from '../Interfaces/dto/GetUnreadDto';
+import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
+import { GetUnreadDto } from '../dto/GetUnreadDto';
 
 @Injectable()
 export class SupportRequestClientService implements ISupportRequestClientService {

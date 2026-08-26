@@ -18,12 +18,8 @@ import { ReservationService } from './reservation.service';
 import type { typeId } from '../Users/Interfaces/param-id';
 import type { ReservationDto } from './dto/ReservationDto';
 import { CreateReserveInterceptor } from './interceptors/createReserveInterceptor';
-//import type { ReservationSearchOptions } from './Interfaces/ReservationSearchOptions';
 import { IdReservationGuard } from '../guards/id-reservation.guard';
-//import moment from 'moment';
 import { Roles } from '@app/guards/decorators/role.decorator';
-//import { AuthGuard } from '@nestjs/passport';
-//import { RolesGuard } from '@app/guards/roles.guard';
 import {
   ApiBearerAuth,
   ApiBody,
