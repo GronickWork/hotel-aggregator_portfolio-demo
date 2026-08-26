@@ -85,10 +85,12 @@ export class ReservationService implements IReservation {
     }
     return outReserve;
   }
+
   /*Метод проверен*/
   async getReserveByRooms(id: ObjectId): Promise<Reservation[] | null> {
     return await this.reservationModel.find({ roomId: id }).select('-__v').exec();
   }
+
   /*Метод проверен*/
   async dataOutput(id: Types.ObjectId): Promise<outReservation | string> {
     try {
@@ -104,10 +106,14 @@ export class ReservationService implements IReservation {
         );
       }
       this.newReserv = {
+        reserveId: id as unknown as string,
         startDate: DSString,
         endDate: DEString,
         hotel: { title: hotelObj.title, description: hotelObj.description },
-        hotelRoom: { description: room.description, images: room.images },
+        hotelRoom: {
+          description: room.description,
+          images: room.images,
+        },
       };
       return this.newReserv;
     } catch (err) {

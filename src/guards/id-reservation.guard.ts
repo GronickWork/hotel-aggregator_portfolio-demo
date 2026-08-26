@@ -9,11 +9,11 @@ export class IdReservationGuard implements CanActivate {
   constructor(private readonly reserveSrv: ReservationService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const sessId = request.session.userId;
+    const userId = request.user.userId;
     const reserv = await this.reserveSrv.getRserveById(
       request.params.id as Types.ObjectId,
     );
-    if (reserv.userId != sessId)
+    if (reserv.userId != userId)
       throw new HttpException(
         'Пользователь не может удалять бронь созданную другими.',
         403,

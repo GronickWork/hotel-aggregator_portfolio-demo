@@ -28,7 +28,6 @@
   },
   "include": [
     "src/**/*",
-    "project-config/**/*"
-  ],
-  
+    "project-config/**/*",
+  ], 
 }

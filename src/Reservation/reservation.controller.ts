@@ -44,6 +44,7 @@ import { ReservationQueryDto } from './dto/reservation-query.dto';
 export class ReservationController {
   constructor(private readonly RrnService: ReservationService) {}
 
+  // Создание бронирования клиентом.
   @Roles('client')
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
@@ -64,6 +65,7 @@ export class ReservationController {
     return this.RrnService.addReservation(data);
   }
 
+  // Свои брони пользователя
   @Roles('client')
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
@@ -83,6 +85,7 @@ export class ReservationController {
     return this.RrnService.getReservations({ userId });
   }
 
+  // Список броней пользователя для менеджера.
   @Roles('manager')
   @ApiBearerAuth('bearer')
   @ApiSecurity('bearer')
@@ -109,12 +112,50 @@ export class ReservationController {
     return this.RrnService.getReservations(filters);
   }
 
-  @Delete('/client/reservations/:id') // Метод проверен
+  // Отмена бронирования клиентом
+  @Roles('client')
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Отмена бронирования клиентом (только для пользователей с ролью client)',
+  })
+  @ApiResponse({ status: 200, description: 'Бронирование успешно удалено' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @ApiResponse({
+    status: 403,
+    description: ' ID текущего пользователя не совпадает с ID пользователя в брони',
+  })
+  @ApiResponse({ status: 400, description: 'Брони с указанным ID не существует' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'ID забронированого номера',
+  })
   @UseGuards(IdReservationGuard)
+  @Delete('/client/reservations/:id') // Метод проверен
   async removeByClient(@Param('id') id: typeId): Promise<void> {
     await this.RrnService.removeReservation(id);
   }
 
+  // Отмена бронирования менеджером
+  @Roles('manager')
+  @ApiBearerAuth('bearer')
+  @ApiSecurity('bearer')
+  @ApiOperation({
+    summary: 'Отмена бронирования менеджером (только для пользователей с ролью manager)',
+  })
+  @ApiResponse({ status: 200, description: 'Бронирование успешно удалено' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не manager' })
+  @ApiResponse({ status: 400, description: 'Брони с указанным ID не существует' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'ID забронированого номера',
+  })
   @Delete('/manager/reservations/:id')
   async removeByManager(@Param('id') id: typeId): Promise<void> {
     await this.RrnService.removeReservation(id);

@@ -1,4 +1,5 @@
 export interface outReservation {
+  reserveId: string;
   startDate: string;
   endDate: string;
   hotelRoom: {
