@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+/*import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { SupportRequestClientService } from './support-request-client.service';
 import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import type { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
@@ -23,4 +23,4 @@ export class SupportRequestClientController {
     newBody.user = sessionId;
     return await this.SRCService.createSupportRequest(newBody);
   }
-}
+}*/

@@ -21,7 +21,6 @@ import {
   ApiParam,
   ApiTags,
   ApiBearerAuth,
-  ApiSecurity,
   ApiConsumes,
   ApiBody,
 } from '@nestjs/swagger';
@@ -29,22 +28,26 @@ import { AuthJwtGuard } from '@app/guards/auth.jwt.guard';
 import { RolesGuard } from '@app/guards/roles.guard';
 import { FilesRoomInterceptor } from '../interceptors/files-room-interceptors';
 import { Roles } from '@app/guards/decorators/role.decorator';
+import { Public } from '@app/guards/decorators/public.decorator';
 
 @Controller('api')
+@ApiBearerAuth('bearer')
+@UseGuards(AuthJwtGuard, RolesGuard)
 @ApiTags('hotels')
 export class HotelRoomController {
   constructor(private readonly hotelRSV: HotelRoomService) {}
 
-  @Get('common/hotel-rooms') // Метод проверен
+  @Public()
   @ApiOperation({
     summary: 'Основной API для поиска номеров. Доступно всем пользователям',
   })
   @ApiResponse({ status: 200, description: 'Номера отелей успешно получены.' })
+  @Get('common/hotel-rooms') // Метод проверен
   getAllHotelRooms(@Query() query: SearchRoomsParams) {
     return this.hotelRSV.search(query);
   }
 
-  @Get('common/hotel-rooms/:id') // Метод проверен
+  @Public()
   @ApiOperation({
     summary: 'Получение подробной информации о номере.. Доступно всем пользователям',
   })
@@ -53,15 +56,12 @@ export class HotelRoomController {
     status: 200,
     description: 'Номера конкретного отеля успешно получены..',
   })
+  @Get('common/hotel-rooms/:id') // Метод проверен
   getHotelRoom(@Param('id') id: Types.ObjectId) {
     return this.hotelRSV.findById(id);
   }
 
-  @Post('admin/hotel-rooms') // Метод проверен
   @Roles('admin')
-  @UseGuards(AuthJwtGuard, RolesGuard)
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Добавление нового номера отеля (только для админа)' })
   @ApiResponse({ status: 201, description: 'Номер успешно создан' })
@@ -84,15 +84,12 @@ export class HotelRoomController {
       required: ['hotel', 'description'],
     },
   })
+  @Post('admin/hotel-rooms') // Метод проверен
   createHotelRoom(@Body() dto: createRoomDto) {
     return this.hotelRSV.create(dto);
   }
 
-  @Put('admin/hotel-rooms/:id') // Метод проверен
   @Roles('admin')
-  @UseGuards(AuthJwtGuard, RolesGuard)
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Изменение номера отеля (только для админа)' })
   @ApiResponse({ status: 201, description: 'Номер успешно изменен' })
@@ -113,6 +110,7 @@ export class HotelRoomController {
       },
     },
   })
+  @Put('admin/hotel-rooms/:id') // Метод проверен
   updateHotelRoom(@Param('id') id: string, @Body() dto: updateRoomDto) {
     return this.hotelRSV.update(id, dto);
   }

@@ -8,7 +8,6 @@ import {
   ApiBody,
   ApiOperation,
   ApiResponse,
-  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthJwtGuard } from '../guards/auth.jwt.guard';
@@ -17,14 +16,13 @@ import { Roles } from '../guards/decorators/role.decorator';
 
 @Controller('api')
 @ApiTags('users')
-@UseGuards(AuthJwtGuard, RolesGuard)
 @ApiBearerAuth('bearer')
+@UseGuards(AuthJwtGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly userSRV: UsersService) {}
 
   @Post('admin/users/') //Метод проверен
   @Roles('admin')
-  @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Регистрация нового пользователя (только для админа)' })
   @ApiResponse({ status: 201, description: 'Пользователь успешно создан' })
   @ApiResponse({ status: 400, description: 'Ошибка валидации или дубликат email' })
@@ -36,7 +34,6 @@ export class UsersController {
 
   @Get('admin/users/') //Метод проверен
   @Roles('admin')
-  @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для админа)' })
   @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })
@@ -48,7 +45,6 @@ export class UsersController {
 
   @Get('manager/users/') //Метод проверен
   @Roles('manager')
-  @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Получение списка пользователей (только для Менеджера)' })
   @ApiResponse({ status: 200, description: 'Список успешно получен' })
   @ApiResponse({ status: 403, description: 'Недостатчно прав доступа' })

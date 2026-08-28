@@ -29,6 +29,7 @@ import { RolesGuard } from '@app/guards/roles.guard';
 
 @Controller('api')
 @ApiTags('hotels')
+@ApiSecurity('bearer')
 @UseGuards(AuthJwtGuard, RolesGuard)
 @ApiBearerAuth('bearer')
 export class HotelController {
@@ -36,7 +37,6 @@ export class HotelController {
 
   @Post('admin/hotels/') // Метод проверен
   @Roles('admin')
-  @ApiSecurity('bearer')
   @ApiOperation({ summary: 'Добавление нового отеля (только для админа)' })
   @ApiResponse({ status: 201, description: 'Отель успешно создан' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
@@ -48,7 +48,6 @@ export class HotelController {
 
   @Get('admin/hotels/') // Метод проверен
   @Roles('admin')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Получение списка гостиниц администратором. (только для админа)',
   })
@@ -61,7 +60,6 @@ export class HotelController {
 
   @Put('admin/hotels/:id') // Метод проверен
   @Roles('admin')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Изменение описания гостиницы администратором. (только для админа)',
   })

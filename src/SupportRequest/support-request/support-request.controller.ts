@@ -21,13 +21,48 @@ import { ReplySendMessages } from '../Interfaces/ReplySendMessages';
 import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { GetUnreadDto } from '../dto/GetUnreadDto';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from '@app/guards/roles.guard';
+import { Roles } from '@app/guards/decorators/role.decorator';
+import type { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
+import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
 
-@Controller('/api')
-@UseGuards(AuthJwtGuard)
+@Controller('api')
+@ApiTags('support-request')
+@ApiBearerAuth('bearer')
+@UseGuards(AuthJwtGuard, RolesGuard)
 export class SupportRequestController {
-  constructor(private readonly supReqSrv: SupportRequestService) {}
+  constructor(
+    private readonly supReqSrv: SupportRequestService,
+    private readonly supReqCliServ: SupportRequestClientService,
+  ) {}
 
-  @Get('/client/support-requests/') //Метод проверен
+  @Roles('client')
+  @ApiOperation({
+    summary: 'Создание обращения в поддержку (только для пользователей с ролью client)',
+  })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @Post('client/support-requests/')
+  async createSupportRequest(
+    @Req() req,
+    @Body() body: CreateSupportRequestDto,
+  ): Promise<ReplyMessageClient> {
+    const userId = req.user.userId;
+    const newData = { ...body };
+    newData.user = userId as typeId;
+    return await this.supReqCliServ.createSupportRequest(newData);
+  }
+
+  @Roles('client')
+  @ApiOperation({
+    summary:
+      'Получение списка обращений в поддержку для клиента (только для пользователей с ролью client)',
+  })
+  @ApiResponse({ status: 201, description: 'Номер успешно забронирован' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @Get('client/support-requests/') //Метод проверен
   async getListClient(
     @Req() req,
     @Query() body: GetChatListParams,

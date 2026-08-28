@@ -40,7 +40,7 @@ async function bootstrap() {
     .addTag('reservations', 'Бронирование и заказы')
     .addTag('auth', 'Авторизация и токены')
     .addTag('users', 'Управление пользователями')
-    .addTag('support', 'Чат с техподдрежкой')
+    .addTag('support-request', 'Чат с техподдрежкой')
     //.addBearerAuth(undefined, 'bearer') так swagger не видит токенов, по этому см след строка
     .addBearerAuth(
       {

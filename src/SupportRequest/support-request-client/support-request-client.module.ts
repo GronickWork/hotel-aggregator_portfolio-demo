@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SupportRequestClientController } from './support-request-client.controller';
+//import { SupportRequestClientController } from './support-request-client.controller';
 import { SupportRequestClientService } from './support-request-client.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SupportRequest, SupportRequestSchema } from '../schemas/supportRequest.schema';
@@ -16,7 +16,7 @@ import { Message } from '../schemas/message.schema';
     SupportRequestClientModule,
     UsersModule,
   ],
-  controllers: [SupportRequestClientController],
+  // controllers: [SupportRequestClientController],
   providers: [SupportRequestClientService, AuthJwtGuard],
 })
 export class SupportRequestClientModule {}

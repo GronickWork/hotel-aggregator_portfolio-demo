@@ -26,7 +26,6 @@ import {
   ApiOperation,
   ApiParam,
   ApiResponse,
-  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { ClientReserveDto } from './dto/ClientReserveDto';
@@ -36,14 +35,13 @@ import { ReservationQueryDto } from './dto/reservation-query.dto';
 
 @Controller('api')
 @ApiTags('reservations')
+@ApiBearerAuth('bearer')
 @UseGuards(AuthJwtGuard, RolesGuard)
 export class ReservationController {
   constructor(private readonly RrnService: ReservationService) {}
 
   // Создание бронирования клиентом.
   @Roles('client')
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Бронирование номера клиентом (только для пользователей с ролью client)',
   })
@@ -63,8 +61,6 @@ export class ReservationController {
 
   // Свои брони пользователя
   @Roles('client')
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary:
       'Список броней текущего пользователя (только для пользователей с ролью client)',
@@ -83,8 +79,6 @@ export class ReservationController {
 
   // Список броней пользователя для менеджера.
   @Roles('manager')
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary:
       'Список броней конкретного пользователя (только для пользователей с ролью manager)',
@@ -110,8 +104,6 @@ export class ReservationController {
 
   // Отмена бронирования клиентом
   @Roles('client')
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Отмена бронирования клиентом (только для пользователей с ролью client)',
   })
@@ -137,8 +129,6 @@ export class ReservationController {
 
   // Отмена бронирования менеджером
   @Roles('manager')
-  @ApiBearerAuth('bearer')
-  @ApiSecurity('bearer')
   @ApiOperation({
     summary: 'Отмена бронирования менеджером (только для пользователей с ролью manager)',
   })
