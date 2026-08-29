@@ -5,9 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SupportRequest, SupportRequestSchema } from '../schemas/supportRequest.schema';
 import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import { UsersModule } from '../../Users/users.module';
-import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
+import { SupportRequestClientService } from './support-request-client.service';
 import { Message, MessageSchema } from '../schemas/message.schema';
-import { SupportRequestEmployeeService } from '../support-request-employee/support-request-employee.servise';
+import { SupportRequestEmployeeService } from './support-request-employee.servise';
 
 @Module({
   imports: [

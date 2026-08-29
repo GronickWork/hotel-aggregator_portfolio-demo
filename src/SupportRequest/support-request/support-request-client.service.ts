@@ -29,7 +29,7 @@ export class SupportRequestClientService implements ISupportRequestClientService
     }
     try {
       const messageCreationData: CreateMessageDto = {
-        author: data.user,
+        author: data.user as typeId,
         text: data.text,
       };
       const newMess = await this.createMessage(messageCreationData);

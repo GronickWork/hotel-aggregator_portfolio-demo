@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { SendMessageDto } from '../dto/SendMessageDto';
+import { SendMessageDto } from '../dto/SendMessageDto';
 import { SupportRequestService } from './support-request.service';
 import { AuthJwtGuard } from '../../guards/auth.jwt.guard';
 import type { GetChatListParams } from '../Interfaces/GetChatListParams';
@@ -21,11 +21,19 @@ import { ReplySendMessages } from '../Interfaces/ReplySendMessages';
 import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { GetUnreadDto } from '../dto/GetUnreadDto';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RolesGuard } from '@app/guards/roles.guard';
 import { Roles } from '@app/guards/decorators/role.decorator';
-import type { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
-import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
+import { CreateSupportRequestDto } from '../dto/CreateSupportRequestDto';
+import { SupportRequestClientService } from './support-request-client.service';
+import { GetListRequestDto } from '../dto/get-list-requestDto';
 
 @Controller('api')
 @ApiTags('support-request')
@@ -43,6 +51,8 @@ export class SupportRequestController {
   })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @ApiResponse({ status: 201, description: 'Обращение создано.' })
+  @ApiBody({ type: CreateSupportRequestDto })
   @Post('client/support-requests/')
   async createSupportRequest(
     @Req() req,
@@ -50,7 +60,7 @@ export class SupportRequestController {
   ): Promise<ReplyMessageClient> {
     const userId = req.user.userId;
     const newData = { ...body };
-    newData.user = userId as typeId;
+    newData.user = userId;
     return await this.supReqCliServ.createSupportRequest(newData);
   }
 
@@ -59,28 +69,66 @@ export class SupportRequestController {
     summary:
       'Получение списка обращений в поддержку для клиента (только для пользователей с ролью client)',
   })
-  @ApiResponse({ status: 201, description: 'Номер успешно забронирован' })
+  @ApiResponse({ status: 200, description: 'Список обращений получен.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
   @Get('client/support-requests/') //Метод проверен
   async getListClient(
     @Req() req,
-    @Query() body: GetChatListParams,
+    @Query() body: GetListRequestDto,
   ): Promise<ReplyMessageClient[] | ReplyMessageManager[] | undefined> {
-    const sessId: string = req.session.userId;
-    return await this.supReqSrv.findSupportRequests(body, sessId);
+    const idUser = req.user.userId;
+    const limit = body.limit ?? 10;
+    const offset = body.offset ?? 0;
+    const isActive = body.isActive ?? false;
+    const params: GetChatListParams = { isActive, user: idUser };
+    const list = await this.supReqSrv.findSupportRequests(params, idUser as string);
+    return list?.slice(offset, offset + limit);
   }
 
+  @Roles('manager')
+  @ApiOperation({
+    summary:
+      'Получение списка обращений в поддержку для менеджера (только для пользователей с ролью manager)',
+  })
+  @ApiResponse({ status: 200, description: 'Список обращений получен.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не manager' })
   @Get('/manager/support-requests/') //Метод проверен
-  async getListManager(@Query() params: GetChatListParams) {
-    return await this.supReqSrv.findSupportRequests(params, '');
+  async getListManager(@Req() req, @Query() body: GetListRequestDto) {
+    const idUser = req.user.userId;
+    const limit = body.limit ?? 10;
+    const offset = body.offset ?? 0;
+    const isActive = body.isActive ?? false;
+    const params: GetChatListParams = { isActive, user: idUser };
+    const list = await this.supReqSrv.findSupportRequests(params, '');
+    return list?.slice(offset, offset + limit);
   }
 
+  @Roles('manager', 'client')
+  @ApiOperation({
+    summary:
+      'Получение истории сообщений из обращения в техподдержку (только для пользователей с ролью manager или client)',
+  })
+  @ApiResponse({ status: 200, description: 'Список обращений получен.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
+  @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
   @Get('/common/support-requests/:id/messages') //Метод проверен
   async getHistoryMessage(@Param('id') id: string): Promise<ReplySendMessages[]> {
     return await this.supReqSrv.getMessages(id);
   }
 
+  @Roles('manager', 'client')
+  @ApiOperation({
+    summary:
+      'Отправление сообщения в чат (только для пользователей с ролью manager или client)',
+  })
+  @ApiResponse({ status: 200, description: 'Сообщение отправлено.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
+  @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
+  @ApiBody({ type: SendMessageDto })
   @Post('/common/support-requests/:id/messages') //Метод проверен
   @UseGuards(SupportRequestGuard)
   async postMessageRequest(
@@ -89,7 +137,7 @@ export class SupportRequestController {
     @Req() req,
   ): Promise<ReplySendMessages> {
     const postMReq: SendMessageDto = {
-      author: req.session.userId,
+      author: req.user.userId,
       supportRequest: paramId,
       text: data.text,
     };

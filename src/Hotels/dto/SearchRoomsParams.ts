@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
-//import { typeId } from '../../Users/Interfaces/param-id';
 
 export class SearchRoomsParams {
   @ApiProperty({ description: 'limit', example: 10, required: false })

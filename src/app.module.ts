@@ -11,7 +11,6 @@ import { ConfigModule } from '@nestjs/config';
 import { links } from '../project-config/links-config';
 import { AuthModule } from './auth/auth.module';
 import { SessionModule } from './session/session.module';
-import { SupportRequestClientModule } from './SupportRequest/support-request-client/support-request-client.module';
 import { JwtAuthModule } from './jwt/jwt.module';
 import { HandlerFilesModule } from './handler-files/handler-files.module';
 
@@ -26,7 +25,6 @@ import { HandlerFilesModule } from './handler-files/handler-files.module';
     SupportRequestModule,
     AuthModule,
     SessionModule,
-    SupportRequestClientModule,
     JwtAuthModule,
     HandlerFilesModule,
   ],

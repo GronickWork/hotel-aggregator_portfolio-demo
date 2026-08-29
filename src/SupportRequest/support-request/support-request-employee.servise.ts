@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SupportRequest } from '../schemas/supportRequest.schema';
 import { Model } from 'mongoose';
 import { Message } from '../schemas/message.schema';
-import { SupportRequestClientService } from '../support-request-client/support-request-client.service';
+import { SupportRequestClientService } from '../support-request/support-request-client.service';
 import { GetUnreadDto } from '../dto/GetUnreadDto';
 import { typeId } from '../../Users/Interfaces/param-id';
 import { ISupportRequestEmployeeService } from '../Interfaces/ISupportRequestEmployeeService';
