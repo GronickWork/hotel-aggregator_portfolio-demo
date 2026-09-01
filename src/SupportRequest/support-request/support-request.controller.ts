@@ -108,12 +108,13 @@ export class SupportRequestController {
   @Roles('manager', 'client')
   @ApiOperation({
     summary:
-      'Получение истории сообщений из обращения в техподдержку (только для пользователей с ролью manager или client)',
+      'Получение истории сообщений из обращения в техподдержку (только для пользователей с ролью manager или client, который создал обращение)',
   })
   @ApiResponse({ status: 200, description: 'Список обращений получен.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
+  @UseGuards(SupportRequestGuard)
   @Get('/common/support-requests/:id/messages') //Метод проверен
   async getHistoryMessage(@Param('id') id: string): Promise<ReplySendMessages[]> {
     return await this.supReqSrv.getMessages(id);
@@ -122,20 +123,23 @@ export class SupportRequestController {
   @Roles('manager', 'client')
   @ApiOperation({
     summary:
-      'Отправление сообщения в чат (только для пользователей с ролью manager или client)',
+      'Отправление сообщения в чат (только для пользователей с ролью manager или client, который создал обращение)',
   })
   @ApiResponse({ status: 200, description: 'Сообщение отправлено.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
   @ApiBody({ type: SendMessageDto })
-  @Post('/common/support-requests/:id/messages') //Метод проверен
   @UseGuards(SupportRequestGuard)
+  @Post('/common/support-requests/:id/messages') //Метод проверен
   async postMessageRequest(
     @Param('id') paramId: string,
     @Body() data: SendMessageDto,
     @Req() req,
   ): Promise<ReplySendMessages> {
+    console.log('from controller, postMessageRequest, paramid', paramId);
+    console.log('from controller, postMessageRequest, data', data);
+    console.log('from controller, postMessageRequest, userId', req.user.userId);
     const postMReq: SendMessageDto = {
       author: req.user.userId,
       supportRequest: paramId,

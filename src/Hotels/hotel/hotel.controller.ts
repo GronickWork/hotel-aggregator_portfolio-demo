@@ -13,7 +13,6 @@ import { createHotelDto } from '../dto/createHotelDto';
 import { HotelDocument } from '../Schemas/hotel.schema';
 import { UpdateHotelParams } from '../Interfaces/UpdateHotelParams';
 import type { typeId } from '../../Users/Interfaces/param-id';
-//import type { SearchHotelParams } from '../Interfaces/SearchHotelParams';
 import { Roles } from '@app/guards/decorators/role.decorator';
 import {
   ApiBearerAuth,
@@ -72,7 +71,6 @@ export class HotelController {
     @Param('id') id: typeId,
     @Body() body: UpdateHotelParams,
   ): Promise<Partial<HotelDocument> | null> {
-    console.log(' from HotelController.updateHotel id: ', id);
     return this.hotelHSV.update(id, body);
   }
 }

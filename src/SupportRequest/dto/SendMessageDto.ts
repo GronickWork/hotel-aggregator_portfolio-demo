@@ -1,14 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { typeId } from '../../Users/Interfaces/param-id';
+import { IsString } from 'class-validator';
 
 export class SendMessageDto {
-  author!: typeId;
-  supportRequest!: typeId | string;
-
   @ApiProperty({
+    type: String,
     description: 'Сообщение в чат',
     example: 'Какое-то сообщение',
-    required: false,
   })
+  @IsString()
   text!: string;
+
+  author!: typeId;
+  supportRequest!: typeId | string;
 }
