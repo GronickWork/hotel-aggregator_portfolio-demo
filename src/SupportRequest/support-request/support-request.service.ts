@@ -98,17 +98,17 @@ export class SupportRequestService implements ISupportRequestService {
           `Обращения с id: ${data.supportRequest} не найдено.(sendMess)`,
           404,
         );
-      return await this.SRCService.getMessage(uppdateRequest.user);
+      return await this.SRCService.getMessage(newMess.id);
     } catch (err) {
       throw err;
     }
   }
   /*Метод проверен */
-  async getMessages(messId: typeId | string): Promise<ReplySendMessages[]> {
+  async getMessages(requestId: typeId | string): Promise<ReplySendMessages[]> {
     const outMess: ReplySendMessages[] = [];
-    const sReq: SupportRequest | null = await this.findById(messId);
+    const sReq: SupportRequest | null = await this.findById(requestId);
     if (!sReq)
-      throw new HttpException(`Обращения с id: ${messId} не найдено.(getMess)`, 404);
+      throw new HttpException(`Обращения с id: ${requestId} не найдено.(getMess)`, 404);
     for (let i = 0; i < sReq.messages.length; i++) {
       const item = sReq.messages[i];
       const message = await this.SRCService.getMessage(item);

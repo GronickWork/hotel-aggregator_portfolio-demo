@@ -137,9 +137,6 @@ export class SupportRequestController {
     @Body() data: SendMessageDto,
     @Req() req,
   ): Promise<ReplySendMessages> {
-    console.log('from controller, postMessageRequest, paramid', paramId);
-    console.log('from controller, postMessageRequest, data', data);
-    console.log('from controller, postMessageRequest, userId', req.user.userId);
     const postMReq: SendMessageDto = {
       author: req.user.userId,
       supportRequest: paramId,
