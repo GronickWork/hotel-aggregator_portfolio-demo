@@ -147,20 +147,38 @@ export class SupportRequestController {
     return newMess;
   }
 
-  @Post('/common/support-requests/:id/messages/read')
+  @Roles('manager', 'client')
+  @ApiOperation({
+    summary:
+      'Отправление отметки, что сообщения прочитаны (только для пользователей с ролью manager или client, который создал обращение)',
+  })
+  @ApiResponse({ status: 201, description: 'Отметки о прочтении успешно выставлены.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
+  @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
   @UseGuards(SupportRequestGuard)
+  @Post('/common/support-requests/:id/messages/read')
   async markDateAsRead(@Param('id') supRId: string, @Req() req) {
-    const sessId = req.session.userId;
+    const jwtId = req.user.userId;
     const readData: MarkMessagesAsReadDto = {
-      user: sessId,
+      user: jwtId,
       supportRequest: supRId as typeId,
       createdBefore: new Date(),
     };
     return await this.supReqSrv.prepearingStampDate(readData);
   }
 
-  @Get('/common/support-requests/:id/messages/read')
+  @Roles('manager', 'client')
+  @ApiOperation({
+    summary: `Возвращает количество сообщений, которые были отправлены и не отмечены прочитанным. Если запрос от-client - не прочитаны менеджером,
+       если запрос от-manager - не прочитаны клиентом`,
+  })
+  @ApiResponse({ status: 201, description: 'Количество сообщений успешно получено.' })
+  @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
+  @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
+  @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
   @UseGuards(SupportRequestGuard)
+  @Get('/common/support-requests/:id/messages/read')
   async getUnreadCount(@Param('id') supRId: string, @Req() req) {
     const sessId = req.session.userId;
     const data: GetUnreadDto = {
