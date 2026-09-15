@@ -17,8 +17,8 @@ export class Message {
   @Prop({ required: true })
   text!: string;
 
-  @Prop()
-  readAt?: Date;
+  @Prop({ type: Date, required: false })
+  readAt?: Date | undefined;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

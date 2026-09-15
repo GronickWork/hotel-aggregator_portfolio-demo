@@ -10,21 +10,21 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { links } from '../project-config/links-config';
 import { AuthModule } from './auth/auth.module';
-import { SessionModule } from './session/session.module';
 import { JwtAuthModule } from './jwt/jwt.module';
 import { HandlerFilesModule } from './handler-files/handler-files.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot(), // загружает .env автоматически из корня
     MongooseModule.forRoot(links.UrlDb || 'mongodb://localhost:27017/ClusterDPH'),
+    EventEmitterModule.forRoot(), // Для работы подписки  на сообщения из чата
     UsersModule,
     HotelModule,
     HotelRoomModule,
     ReservationModule,
     SupportRequestModule,
     AuthModule,
-    SessionModule,
     JwtAuthModule,
     HandlerFilesModule,
   ],

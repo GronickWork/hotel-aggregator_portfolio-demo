@@ -3,9 +3,6 @@ dotenv.config();
 import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import session from 'express-session';
-import cookieParser from 'cookie-parser';
-import { keys } from '../project-config/keys-config';
 import { links } from '../project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
@@ -58,15 +55,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  app.use(cookieParser());
-  app.use(
-    session({
-      secret: keys.SeSSSct || 'notSecret',
-      resave: false,
-      saveUninitialized: false,
-      cookie: { secure: process.env.NODE_ENV === 'production' },
-    }),
-  );
   await app.listen(links.Port ?? 3000, () => {
     console.log(`Server starting - on PORT: ${links.Port}`);
   });

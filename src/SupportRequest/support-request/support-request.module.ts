@@ -8,6 +8,7 @@ import { UsersModule } from '../../Users/users.module';
 import { SupportRequestClientService } from './support-request-client.service';
 import { Message, MessageSchema } from '../schemas/message.schema';
 import { SupportRequestEmployeeService } from './support-request-employee.servise';
+import { SupportChatGatewey } from './support-chat-gatewey';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SupportRequestEmployeeService } from './support-request-employee.servis
     AuthJwtGuard,
     SupportRequestClientService,
     SupportRequestEmployeeService,
+    SupportChatGatewey,
   ],
   controllers: [SupportRequestController],
 })

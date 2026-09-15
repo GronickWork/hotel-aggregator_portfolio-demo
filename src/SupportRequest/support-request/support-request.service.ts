@@ -20,16 +20,24 @@ import { MarkMessagesAsReadDto } from '../dto/MarkMessagesAsReadDto';
 import { SupportRequestEmployeeService } from './support-request-employee.servise';
 import { GetUnreadDto } from '../dto/GetUnreadDto';
 import { ISupportRequestService } from '../Interfaces/ISupportRequestService';
-import { Message } from '../schemas/message.schema';
-import { eventEmitter, SupportMessageEvent } from './events';
+import { Message, MessageDocument } from '../schemas/message.schema';
+import { eventEmitter } from './events';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+interface SupportMessageEvent {
+  requestId: string;
+  message: ReplySendMessages;
+}
 
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
   constructor(
     @InjectModel(SupportRequest.name) private SupRequest: Model<SupportRequestService>,
+    @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
     private readonly SRCService: SupportRequestClientService,
     private readonly userSrv: UsersService,
     private readonly SREService: SupportRequestEmployeeService,
+    private readonly eventEmiter: EventEmitter2,
   ) {}
   /*Метод проверен */
   async findSupportRequests(
@@ -122,16 +130,19 @@ export class SupportRequestService implements ISupportRequestService {
   }
 
   subscribe(
-    handler: (supportRequest: SupportRequest, message: Message) => void,
+    handler: (requestId: string, message: ReplySendMessages) => void,
   ): () => void {
-    eventEmitter.on('new-message', handler);
+    const listener = (event: SupportMessageEvent) => {
+      handler(event.requestId, event.message);
+    };
+    this.eventEmiter.addListener('new-message', listener);
     return () => {
-      eventEmitter.off('new-message', handler);
+      this.eventEmiter.removeListener('new-message', listener);
     };
   }
 
-  emitNewMessage(requestId: string, message: any) {
-    eventEmitter.emit('new-message', new SupportMessageEvent(requestId, message));
+  emitNewMessage(requestId: string, message: ReplySendMessages) {
+    eventEmitter.emit('new-message', { requestId, message } as SupportMessageEvent);
   }
 
   async prepearingStampDate(data: MarkMessagesAsReadDto) {

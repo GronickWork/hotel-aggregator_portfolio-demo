@@ -53,6 +53,7 @@ export class SupportRequestController {
   @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
   @ApiResponse({ status: 201, description: 'Обращение создано.' })
   @ApiBody({ type: CreateSupportRequestDto })
+  @UseGuards(RolesGuard)
   @Post('client/support-requests/')
   async createSupportRequest(
     @Req() req,
@@ -72,6 +73,7 @@ export class SupportRequestController {
   @ApiResponse({ status: 200, description: 'Список обращений получен.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не client' })
+  @UseGuards(RolesGuard)
   @Get('client/support-requests/') //Метод проверен
   async getListClient(
     @Req() req,
@@ -94,6 +96,7 @@ export class SupportRequestController {
   @ApiResponse({ status: 200, description: 'Список обращений получен.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не manager' })
+  @UseGuards(RolesGuard)
   @Get('/manager/support-requests/') //Метод проверен
   async getListManager(@Req() req, @Query() body: GetListRequestDto) {
     const idUser = req.user.userId;
@@ -114,7 +117,7 @@ export class SupportRequestController {
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
-  @UseGuards(SupportRequestGuard)
+  @UseGuards(RolesGuard, SupportRequestGuard)
   @Get('/common/support-requests/:id/messages') //Метод проверен
   async getHistoryMessage(@Param('id') id: string): Promise<ReplySendMessages[]> {
     return await this.supReqSrv.getMessages(id);
@@ -125,12 +128,16 @@ export class SupportRequestController {
     summary:
       'Отправление сообщения в чат (только для пользователей с ролью manager или client, который создал обращение)',
   })
-  @ApiResponse({ status: 200, description: 'Сообщение отправлено.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Сообщение отправлено.',
+    type: ReplySendMessages,
+  })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
   @ApiBody({ type: SendMessageDto })
-  @UseGuards(SupportRequestGuard)
+  @UseGuards(RolesGuard, SupportRequestGuard)
   @Post('/common/support-requests/:id/messages') //Метод проверен
   async postMessageRequest(
     @Param('id') paramId: string,
@@ -156,7 +163,7 @@ export class SupportRequestController {
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
-  @UseGuards(SupportRequestGuard)
+  @UseGuards(RolesGuard, SupportRequestGuard)
   @Post('/common/support-requests/:id/messages/read')
   async markDateAsRead(@Param('id') supRId: string, @Req() req) {
     const jwtId = req.user.userId;
@@ -170,17 +177,16 @@ export class SupportRequestController {
 
   @Roles('manager', 'client')
   @ApiOperation({
-    summary: `Возвращает количество сообщений, которые были отправлены и не отмечены прочитанным. Если запрос от-client - не прочитаны менеджером,
-       если запрос от-manager - не прочитаны клиентом`,
+    summary: `Возвращает количество сообщений, которые были отправлены и не отмечены прочитанным`,
   })
   @ApiResponse({ status: 201, description: 'Количество сообщений успешно получено.' })
   @ApiResponse({ status: 401, description: 'Пользователь не авторизован' })
   @ApiResponse({ status: 403, description: 'Роль пользователя не подходит.' })
   @ApiParam({ name: 'id', required: true, type: String, description: 'id обращения' })
-  @UseGuards(SupportRequestGuard)
+  @UseGuards(RolesGuard, SupportRequestGuard)
   @Get('/common/support-requests/:id/messages/read')
   async getUnreadCount(@Param('id') supRId: string, @Req() req) {
-    const sessId = req.session.userId;
+    const sessId = req.user.userId;
     const data: GetUnreadDto = {
       supRId: supRId as typeId,
       userId: sessId,

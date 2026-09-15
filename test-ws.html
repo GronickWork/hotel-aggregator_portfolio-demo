@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h3>WS Test: localhost:3001</h3>
+    <div id="log" style="font-family:monospace; white-space:pre-wrap;"></div>
+
+    <script>
+      const log = document.getElementById('log');
+      function L(msg) { log.textContent += msg + '\n'; console.log(msg); }
+
+      // Пробуем сначала корень, если не сработает — раскомментируй строку с /support-chat
+      const ws = new WebSocket('ws://localhost:3001');
+      // const ws = new WebSocket('ws://localhost:3001/support-chat');
+
+      ws.onopen = () => L('✅ Connected (WebSocket opened)');
+      ws.onmessage = (e) => L('📩 Message: ' + e.data);
+      ws.onerror = (e) => L('❌ Error: ' + JSON.stringify(e));
+      ws.onclose = (e) => L(`🔌 Closed: code=${e.code}, reason="${e.reason}"`);
+    </script>
+</body>
+</html>
