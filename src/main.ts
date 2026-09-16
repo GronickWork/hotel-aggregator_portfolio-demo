@@ -6,9 +6,15 @@ import { AppModule } from './app.module';
 import { links } from '../project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useWebSocketAdapter(new IoAdapter(app));
+  app.enableCors();
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   /**Строки с useGlobalPipes по  SwaggerModule.setup нужны толко для Swagger*/
   app.useGlobalPipes(
     new ValidationPipe({

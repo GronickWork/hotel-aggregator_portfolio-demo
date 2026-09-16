@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS Test</title>
+    <!-- CDN обязателен, если HTML не на сервере -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      #logs { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto; margin-top: 10px; background: #f9f9f9; }
+      .log-line { margin: 4px 0; }
+      input, button { padding: 8px; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <h2>WebSocket Chat Test: support-chat</h2>
+    <p id="status">Status: waiting...</p>
+
+    <div>
+      <input type="text" id="msgInput" placeholder="Введите сообщение..." style="width: 250px;">
+      <button id="sendBtn">Отправить</button>
+    </div>
+
+    <div><strong>Лог событий:</strong></div>
+    <div id="logs"></div>
+    <script>
+      const logs = document.getElementById('logs');
+      const status = document.getElementById('status');
+      const msgInput = document.getElementById('msgInput');
+      const sendBtn = document.getElementById('sendBtn');
+
+      function log(msg) {
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.textContent = new Date().toLocaleTimeString() + ' | ' + msg;
+        logs.prepend(line);
+      }
+
+      const socket = io('http://localhost:3001', {
+        path: '/support-chat',
+        transports: ['websocket'],
+      });
+
+      socket.on('connect', () => {
+        status.textContent = 'Status: ✅ Connected';
+        log('Connected to WS gateway');
+      });
+
+      socket.on('disconnect', reason => {
+        status.textContent = 'Status: ❌ Disconnected (' + reason + ')';
+        log('Disconnected: ' + reason);
+      });
+
+      sendBtn.addEventListener('click', () => {
+        const text = msgInput.value.trim();
+        if (!text) return;
+
+        log('Отправлено: ' + text);
+        socket.emit('send-message', { text });
+        msgInput.value = '';
+        msgInput.focus();
+      });
+
+      msgInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') sendBtn.click();
+      });
+
+      socket.on('new-message-test', data => {
+        log('Получено от сервера: ' + data.text);
+      });
+    </script>
+  </body>
+</html>
