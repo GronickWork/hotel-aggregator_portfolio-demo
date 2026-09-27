@@ -17,6 +17,23 @@
     <h2>WebSocket Chat Test: support-chat</h2>
     <p id="status">Status: waiting...</p>
 
+    <label style="display:block; margin-top:10px; font-weight:bold;">Роль (для демо-метки)</label>
+    <select id="roleSelect" style="width:100%; padding:6px; margin-bottom:8px;">
+      <option value="client">client</option>
+      <option value="manager">manager</option>
+    </select>
+    <div id="roleStatus" style="margin-bottom: 12px; padding: 6px 10px; border-radius: 4px; font-weight: bold; display: none;">
+      <!-- Сюда JS будет писать Role: client / manager -->
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label style="display: block; margin-bottom: 4px; font-weight: bold;">JWT Token (для демо)</label>
+      <input id="tokenInput" type="text" placeholder="Вставьте JWT сюда" style="width: 100%; padding: 6px; box-sizing: border-box;">
+
+      <label style="display: block; margin-bottom: 4px; font-weight: bold;">ID обращения</label>
+      <input id="ticketInput" type="text" placeholder="supportRequestId" style="width: 100%; padding: 6px; box-sizing: border-box; margin-bottom: 8px;">
+
+      <button id="connectBtn" style="padding: 8px 16px; font-weight: bold;">Connect</button>
+    </div>
     <div>
       <input type="text" id="msgInput" placeholder="Введите сообщение..." style="width: 250px;">
       <button id="sendBtn">Отправить</button>
@@ -29,6 +46,11 @@
       const status = document.getElementById('status');
       const msgInput = document.getElementById('msgInput');
       const sendBtn = document.getElementById('sendBtn');
+      const tokenInput = document.getElementById('tokenInput');
+      const ticketInput = document.getElementById('ticketInput');
+      const connectBtn = document.getElementById('connectBtn');
+
+      let socket = null;
 
       function log(msg) {
         const line = document.createElement('div');
@@ -37,38 +59,109 @@
         logs.prepend(line);
       }
 
-      const socket = io('http://localhost:3001', {
+    // --- Подключение по кнопке ---
+    connectBtn.addEventListener('click', () => {
+      const token = tokenInput.value.trim();
+      const ticketId = ticketInput.value.trim();
+
+      if (!token) {
+        log('Ошибка: введите токен');
+        return;
+      }
+      if (!ticketId) {
+        log('Ошибка: введите ID обращения');
+        return;
+      }
+
+      // Если уже подключены — отключаемся
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
+
+      socket = io('http://localhost:3001', {
         path: '/support-chat',
         transports: ['websocket'],
+        query: { token, ticketId },
       });
 
       socket.on('connect', () => {
         status.textContent = 'Status: ✅ Connected';
         log('Connected to WS gateway');
-      });
 
-      socket.on('disconnect', reason => {
-        status.textContent = 'Status: ❌ Disconnected (' + reason + ')';
-        log('Disconnected: ' + reason);
-      });
+      // Метка роли
+      try {
+        /*const parts = token.split('.');
+        if (parts.length !== 3) throw new Error('Invalid token format');
+        // Добавляем недостающие символы для корректного Base64 (частая проблема)
+        const base64Url = parts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const padding = '='.repeat((4 - base64Url.length % 4) % 4);
+        const fullBase64 = base64 + padding;
 
-      sendBtn.addEventListener('click', () => {
-        const text = msgInput.value.trim();
-        if (!text) return;
+        const payloadStr = atob(fullBase64);
+        const payload = JSON.parse(payloadStr);
 
-        log('Отправлено: ' + text);
-        socket.emit('send-message', { text });
-        msgInput.value = '';
-        msgInput.focus();
-      });
+        const role = payload.role || 'unknown';*/
+        const role = document.getElementById('roleSelect').value;
+        const roleEl = document.getElementById('roleStatus');
+        roleEl.style.display = 'block';
+        roleEl.textContent = 'Role: ' + role;
+        roleEl.style.backgroundColor = role === 'client' ? '#e3f2fd' : '#e8f5e9';
+        roleEl.style.color = role === 'client' ? '#1565c0' : '#2e7d32';
 
-      msgInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') sendBtn.click();
-      });
+        if (role === 'client') {
+          roleEl.textContent = 'Role: client';
+          roleEl.style.backgroundColor = '#e3f2fd';
+          roleEl.style.color = '#1565c0';
+        } else if (role === 'manager') {
+          roleEl.textContent = 'Role: manager';
+          roleEl.style.backgroundColor = '#e8f5e9';
+          roleEl.style.color = '#2e7d32';
+        } else {
+          roleEl.textContent = 'Role: ' + role;
+          roleEl.style.backgroundColor = '#fff3e0';
+          roleEl.style.color = '#ef6c00';
+        }
+      } catch (e) {
+        console.error('Failed to decode JWT:', e);
+        log('Ошибка декодирования токена — проверьте, что вставили полный JWT');
+      }
+    });
 
-      socket.on('new-message-test', data => {
-        log('Получено от сервера: ' + data.text);
-      });
+    socket.on('disconnect', reason => {
+      status.textContent = 'Status: ❌ Disconnected (' + reason + ')';
+      log('Disconnected: ' + reason);
+    });
+
+    socket.on('error', data => {
+      log('Ошибка сервера: ' + JSON.stringify(data));
+    });
+
+    socket.on('new-message-test', data => {
+      log('Получено от сервера: ' + data.text);
+    });
+  });
+
+  // --- Отправка сообщения ---
+  sendBtn.addEventListener('click', () => {
+    if (!socket || !socket.connected) {
+      log('Ошибка: сначала подключитесь к серверу');
+      return;
+    }
+
+    const text = msgInput.value.trim();
+    if (!text) return;
+
+    log('Отправлено: ' + text);
+    socket.emit('send-message', { text });
+    msgInput.value = '';
+    msgInput.focus();
+  });
+
+  msgInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendBtn.click();
+  });
     </script>
   </body>
 </html>

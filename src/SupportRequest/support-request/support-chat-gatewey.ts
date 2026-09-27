@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { SupportRequestService } from './support-request.service';
 import {
   ConnectedSocket,
@@ -7,14 +7,16 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { SupportRequestGuard } from '@app/guards/support-request.guard';
 
 interface SubscribePayload {
   chatId: string;
 }
 
 @WebSocketGateway({ path: '/support-chat' })
+@UseGuards(SupportRequestGuard)
 @Injectable()
-export class SupportChatGatewey {
+export class SupportChatGateway {
   private subscriptions = new Map<string, () => void>();
   constructor(private readonly SRService: SupportRequestService) {}
 
