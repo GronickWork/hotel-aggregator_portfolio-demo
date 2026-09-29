@@ -6,7 +6,7 @@ COPY package*.json ./
 
 #RUN npm install
 # Для воспроизводимости и чистоты
-RUN npm ci --only=production
+RUN npm ci 
 
 COPY . /usr/app
 
@@ -14,6 +14,8 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 RUN npm run build
+
+RUN npm prune --production
 
 FROM node:22.15.1-alpine
 

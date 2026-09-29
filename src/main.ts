@@ -3,7 +3,7 @@ dotenv.config();
 import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { links } from '../project-config/links-config';
+//import { links } from '../project-config/links-config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -61,8 +61,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(links.Port ?? 3000, () => {
-    console.log(`Server starting - on PORT: ${links.Port}`);
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  await app.listen(port, '0.0.0.0', () => {
+    console.log(`Server starting - on PORT: ${port}`);
   });
 }
 void bootstrap();
