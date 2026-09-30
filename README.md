@@ -17,7 +17,7 @@
 
 ## Быстрый запуск (Docker)
 ```powershell
-docker run -p 3001:3001 --rm -e PORT=3001 -e MONGO_URL="<вставь строку Atlas>" -e JWT_SECRET="<Вставьте свой секретный ключ>" gronik4/hotel-aggregator_portfolio-demo:v01.02.0
+docker run -p 3001:3001 --rm -e PORT=3001 -e MONGO_URL="<вставь строку Atlas>" -e JWT_SECRET="<Вставьте свой секретный ключ>" gronik4/hotel-aggregator_portfolio-demo:v01.01.0
 ```  
 После запуска проект будет доступен по адресу: `http://localhost:3001`, а Swagger документация по адресу:  `http://localhost:3001/docs`.
    
